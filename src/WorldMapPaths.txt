@@ -1,0 +1,10 @@
+## Title: WorldMapPaths
+## Description: Adds ability to see path to desired destination.
+## Author: AnotherORC
+## APIVersion: 101040
+## AddOnVersion: 100
+## Version: ${VERSION}
+## SavedVariables: WorldMapPathsVars
+## DependsOn: LibAddonMenu-2.0
+
+WMP.lua

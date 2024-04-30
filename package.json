@@ -1,0 +1,22 @@
+﻿{
+	"name": "worldmappaths",
+	"version": "1.0",
+	"description": "Adds paths to selected location on world map.",
+	"type": "module",
+	"scripts": {
+		"release": "cross-env ENVIRONMENT=deploy node ./utils/build.js",
+		"build": "cross-env ENVIRONMENT=development node ./utils/build.js",
+		"watch-dev": "watch \"npm run build\" ./src"
+	},
+	"author": "AnotherORC",
+	"license": "ISC",
+	"devDependencies": {
+		"watch": "^0.13.0"
+	},
+	"dependencies": {
+		"@alumna/reflect": "^1.1.0",
+		"cross-env": "^7.0.3",
+		"dotenv": "^16.3.1",
+		"zip-a-folder": "^3.1.5"
+	}
+}
