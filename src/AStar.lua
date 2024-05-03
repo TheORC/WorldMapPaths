@@ -92,13 +92,16 @@ end
 ---@param goal WMP_Node
 function WMP_Calculate(start, goal)
   local open_set = { start }
+  local closed_set = {}
   local came_from = {}
 
   local g_score, f_score = {}, {}
   g_score[start] = 0
   f_score[start] = g_score[start] + h(start, goal)
 
+  -- While we have nodes to search, keep looking for the shortest path
   while #open_set do
+    -- Get the next closes node to the goal
     local current = calculate_lowest_f(open_set, f_score)
 
     -- We have found the path.
@@ -106,23 +109,32 @@ function WMP_Calculate(start, goal)
       return reconstruct_path(came_from, current)
     end
 
+    -- We have another node
+    -- Calculate it's neighbours
+
     remove_node(open_set, current)
+    table.insert(closed_set, current)
 
+    -- loop through each enighbour and calculate ralevent g_score and f_scores.
     for i, neighbour in ipairs(current:GetNeighbours()) do
-      if g_score[neighbour] == nil then
-        g_score[neighbour] = 1 / 0
-      end
+      -- Don't process a node we have already checked
+      -- This helps prevent infinet loops.
+      if not_in(closed_set, neighbour) then
+        -- Calculate the gscore for this neighbour
+        local tentative_g = g_score[current] + dist(current, neighbour)
 
-      local tentative_g = g_score[current] + dist(current, neighbour)
+        if g_score[neighbour] == nil or tentative_g < g_score[neighbour] then
+          -- Update the path so we can follow it back later if it proves to be the shorted
+          came_from[neighbour] = current;
 
-      if tentative_g < g_score[neighbour] then
-        came_from[neighbour] = current;
+          -- Update the neighbours g_score and f_score
+          g_score[neighbour] = tentative_g
+          f_score[neighbour] = tentative_g + h(neighbour, goal)
 
-        g_score[neighbour] = tentative_g
-        f_score[neighbour] = tentative_g + h(neighbour, goal)
-
-        if not_in(open_set, neighbour) then
-          table.insert(open_set, neighbour)
+          -- Check this is not already in the open_set
+          if not_in(open_set, neighbour) then
+            table.insert(open_set, neighbour)
+          end
         end
       end
     end
