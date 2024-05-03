@@ -7,4 +7,9 @@
 ## SavedVariables: WorldMapPathsVars
 ## DependsOn: LibAddonMenu-2.0
 
+Vector.lua
+Node.lua
+AStar.lua
+Test.lua
+
 WMP.lua

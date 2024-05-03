@@ -11,6 +11,19 @@ WMP_SETTINGS = {
     AUTHOR       = "AnotherORC",
 }
 
+local function AddWayPoint()
+
+end
+
+local function AddChild()
+
+end
+
+local function AddParent()
+
+end
+
+
 ---This method os called when the addon is loadded for the first time
 ---@param _ nil
 ---@param name string
@@ -18,6 +31,10 @@ local function OnAddonLoad(_, name)
     -- Check if this is our addon
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
+
+    SLASH_COMMANDS["/wmp_test"] = function()
+        WMP_Run_Tests()
+    end
 end
 
 EVENT_MANAGER:RegisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED, OnAddonLoad)
