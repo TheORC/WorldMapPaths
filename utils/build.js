@@ -1,7 +1,7 @@
 import 'dotenv/config';
-import reflect from '../node_modules/@alumna/reflect/dist/reflect.es.js';
+import reflect from '@alumna/reflect';
 import { zip } from 'zip-a-folder';
-import fs from "node:fs"
+import fs from 'node:fs';
 
 /**
  * Helper method for updating the plugin in the plugins folder with the files in src.
@@ -21,8 +21,10 @@ async function UpdatePlugin() {
  * Helper method for creating a zip for the plugin.
  */
 async function BuildPlugin() {
-  const version = fs.readFileSync("./version.txt", 'utf-8');
-  await zip('./src', `./builds/${process.env.PROJECT_NAME} v${version}.zip`, { destPath: `${process.env.PROJECT_NAME}/` });
+  const version = fs.readFileSync('./version.txt', 'utf-8');
+  await zip('./src', `./builds/${process.env.PROJECT_NAME} v${version}.zip`, {
+    destPath: `${process.env.PROJECT_NAME}/`,
+  });
 }
 
 switch (process.env.ENVIRONMENT) {
