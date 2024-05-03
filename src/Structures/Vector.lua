@@ -1,5 +1,7 @@
 ---Class representation of a vector.
 ---@class WMP_Vector
+---@field public x number
+---@field public y number
 WMP_Vector = ZO_InitializingObject:Subclass()
 
 ---Creates a new Vector class
