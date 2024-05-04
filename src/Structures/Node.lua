@@ -1,6 +1,6 @@
 ---Search through a list of neighbours to see if the specified one already exists.
 ---@param neighbours WMP_Node[]
----@param target WMP_Node[]
+---@param target WMP_Node
 ---@return boolean
 local function HasNeighbour(neighbours, target)
   for _, value in ipairs(neighbours) do
@@ -19,7 +19,7 @@ local function RemoveNeighbour(neighbours, target)
   for i, node in ipairs(neighbours) do
     if node == target then
       table.remove(neighbours, i)
-      break;
+      break
     end
   end
 end
@@ -75,5 +75,11 @@ end
 ---String representation of a node
 ---@return string
 function WMP_Node:toString()
-  return "Node (" .. self.m_id .. ") x: " .. self.m_position.x .. " y: " .. self.m_position.y
+  local neighbours = ""
+  for _, neighbour in ipairs(self:GetNeighbours()) do
+    neighbours = neighbour:GetId() .. ", " .. neighbours
+  end
+
+  return "Node (id: " ..
+      self.m_id .. " x: " .. self.m_position.x .. " y: " .. self.m_position.y .. ") (" .. neighbours .. ")"
 end

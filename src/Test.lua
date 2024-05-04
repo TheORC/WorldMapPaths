@@ -4,7 +4,7 @@ local currentID = 0
 ---@return integer
 local function getNextId()
   currentID = currentID + 1
-  return currentID;
+  return currentID
 end
 
 ---Prints the tests to console
@@ -16,6 +16,11 @@ function WMP_Print(nodes)
   end
 
   if type(nodes) == "table" then
+    if #nodes == 0 then
+      d('No nodes in the map')
+      return
+    end
+
     for _, node in ipairs(nodes) do
       d(node:toString())
     end

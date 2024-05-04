@@ -26,7 +26,7 @@ local function remove_node(set, target)
   for i, node in ipairs(set) do
     if set[i] == target then
       table.remove(set, i)
-      break;
+      break
     end
   end
 end
@@ -125,7 +125,7 @@ function WMP_Calculate(start, goal)
 
         if g_score[neighbour] == nil or tentative_g < g_score[neighbour] then
           -- Update the path so we can follow it back later if it proves to be the shorted
-          came_from[neighbour] = current;
+          came_from[neighbour] = current
 
           -- Update the neighbours g_score and f_score
           g_score[neighbour] = tentative_g

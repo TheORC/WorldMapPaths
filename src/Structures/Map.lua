@@ -11,8 +11,6 @@ end
 ---@param position WMP_Vector
 ---@return integer nodeId, WMP_Node node
 local function CreateNode(position)
-  d('Creating node pos: x: ' .. position.x .. ' y: ' .. position.y)
-
   local nodeId = GenerateHash(position.x, position.y)
   ---@diagnostic disable-next-line: undefined-field
   return nodeId, WMP_Node:New(nodeId, position)
@@ -42,7 +40,6 @@ end
 function WMP_Map:AddEnterence(enterencePosition)
   -- Make sure the node does not already exist
   if self:GetNode(GenerateHash(enterencePosition.x, enterencePosition.y)) ~= nil then
-    d('Node with the same Id already exists!')
     return nil, nil
   end
 
@@ -54,10 +51,9 @@ end
 ---Adds a new enterence node to the map
 ---@param nodePosition WMP_Vector
 ---@return integer|nil nodeId, WMP_Node|nil node
-function WMP_Map:AddPathNode(nodePosition)
+function WMP_Map:AddNode(nodePosition)
   -- Make sure the node does not already exist
   if self:GetNode(GenerateHash(nodePosition.x, nodePosition.y)) ~= nil then
-    d('Node with the same Id already exists!')
     return nil, nil
   end
 
@@ -67,16 +63,24 @@ function WMP_Map:AddPathNode(nodePosition)
   return nodeId, node
 end
 
----Remove a node from the map
+---Removes a node from the map. This method also removes any neighbour connections
 ---@param nodeId integer
 function WMP_Map:RemoveNode(nodeId)
-  local node = self:GetNode(nodeId)
-  assert(node ~= nil, "Unable to find node with id: " .. nodeId)
+  local nodeIndex = self:GetNodeIndex(nodeId)
+  assert(nodeIndex ~= nil, "Unable to find node with id: " .. nodeId)
+
+  local node = self.pathNodes[nodeIndex]
+  local ids = {}
+  for _, neighbour in ipairs(node:GetNeighbours()) do
+    table.insert(ids, neighbour:GetId())
+  end
 
   -- Loop through all the neighbours and remove the connections.
-  for _, neighbour in ipairs(node:GetNeighbours()) do
-    self:RemoveConnection(node:GetId(), neighbour:GetId())
+  for _, neighbourId in ipairs(ids) do
+    self:RemoveConnection(nodeId, neighbourId)
   end
+
+  table.remove(self.pathNodes, nodeIndex)
 end
 
 ---Adds a connection between two nodes such that they become neighbours.
@@ -109,9 +113,22 @@ end
 ---@param nodeId integer
 ---@return WMP_Node|nil
 function WMP_Map:GetNode(nodeId)
-  for _, node in ipairs(self.pathNodes) do
+  local nodeIndex = self:GetNodeIndex(nodeId)
+
+  if nodeIndex ~= nil then
+    return self.pathNodes[nodeIndex]
+  end
+
+  return nil
+end
+
+---Returns the index of a node or nil if it can't be found
+---@param nodeId integer
+---@return integer|nil
+function WMP_Map:GetNodeIndex(nodeId)
+  for i, node in ipairs(self.pathNodes) do
     if node:GetId() == nodeId then
-      return node
+      return i
     end
   end
   return nil

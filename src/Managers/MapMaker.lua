@@ -38,7 +38,7 @@ end
 function WMP_Map_Maker:Start()
   -- Make sure it's not already running
   if self.map ~= nil then
-    d('Warning: map already being made.')
+    d('Warning: map has already been made.')
     return
   end
 
@@ -49,8 +49,9 @@ end
 
 ---Resets the map maker for another round
 function WMP_Map_Maker:Reset()
-  self.map = nil;
+  self.map = nil
   self.previousNode = nil
+  d('Reset map maker')
 end
 
 ---Adds a new zone to the zone map. If `connect_previous` is set to true, the new node will be set
@@ -66,14 +67,14 @@ function WMP_Map_Maker:AddNode(connect_previous)
   -- Check the player is in the same zone as the map
   if isPlayerInSameZone(self.map:GetZoneId()) == false then
     d('You are not in the same zone!')
-    return;
+    return
   end
 
   local position = newVectorAtPosition()
-  local nodeId, node = self.map:AddPathNode(position)
+  local nodeId, node = self.map:AddNode(position)
 
   if nodeId == nil or node == nil then
-    d('Failed to add a node');
+    d('Failed to add a node')
     return
   end
 
@@ -88,7 +89,7 @@ function WMP_Map_Maker:AddNode(connect_previous)
 end
 
 ---Removes a node with the specified node from the current map
----@param nodeId any
+---@param nodeId number
 function WMP_Map_Maker:RemoveNode(nodeId)
   -- Check to make sure we are making a map
   if self.map == nil then
@@ -97,11 +98,17 @@ function WMP_Map_Maker:RemoveNode(nodeId)
   end
 
   self.map:RemoveNode(nodeId)
+
+  if self.previousNode == nodeId then
+    self.previousNode = nil
+  end
+
+  d('Removed node (' .. nodeId .. ')')
 end
 
 ---Adds a connection between two nodes
----@param nodeIdA any
----@param nodeIdB any
+---@param nodeIdA number
+---@param nodeIdB number
 function WMP_Map_Maker:AddConnection(nodeIdA, nodeIdB)
   -- Check to make sure we are making a map
   if self.map == nil then
@@ -111,6 +118,20 @@ function WMP_Map_Maker:AddConnection(nodeIdA, nodeIdB)
 
   self.map:AddConnection(nodeIdA, nodeIdB)
   d('Added connection between ' .. nodeIdA .. ' and ' .. nodeIdB)
+end
+
+---Removes a connection between two nodes
+---@param nodeIdA number
+---@param nodeIdB number
+function WMP_Map_Maker:RemoveConnection(nodeIdA, nodeIdB)
+  -- Check to make sure we are making a map
+  if self.map == nil then
+    d('You must start make a map!')
+    return
+  end
+
+  self.map:RemoveConnection(nodeIdA, nodeIdB)
+  d('Removed connection between ' .. nodeIdA .. ' and ' .. nodeIdB)
 end
 
 ---Returns the map.

@@ -44,19 +44,64 @@ local function OnAddonLoad(_, name)
             d('/wmp reset - resets the map maker')
             d('/wmp add - adds a new node to the map and connect to previous.')
             d('/wmp add false - adds node but don\'t connect to previous.')
+            d('/wmp remove %1 - remove a node from the map.')
             d('/wmp connect %1 %2 - connect two nodes together')
             d('/wmp disconnect %1 %2 - remove the connection between two nodes')
             d('/wmp list - list all the map nodes')
-            return;
+            return
         end
 
         local command = options[1]
 
         if command == 'start' then
-            WMP_MAP_MAKER:Start();
+            WMP_MAP_MAKER:Start()
+        elseif command == 'reset' then
+            WMP_MAP_MAKER:Reset()
         elseif command == 'add' then
             local attach = not (options[2] ~= nil and options[2] == "false")
-            WMP_MAP_MAKER:AddNode(attach);
+            WMP_MAP_MAKER:AddNode(attach)
+        elseif command == 'remove' then
+            if #options ~= 2 then
+                d('Command expects a node id')
+                return
+            end
+
+            local nodeId = tonumber(options[2])
+
+            if nodeId == nil then
+                d('Node ids must be integers')
+                return
+            end
+
+            WMP_MAP_MAKER:RemoveNode(nodeId)
+        elseif command == 'connect' then
+            if #options ~= 3 then
+                d('Command expects two node ids')
+                return
+            end
+
+            local nodeA, nodeB = tonumber(options[2]), tonumber(options[3])
+
+            if nodeA == nil or nodeB == nil then
+                d('Node ids must be integers')
+                return
+            end
+
+            WMP_MAP_MAKER:AddConnection(nodeA, nodeB)
+        elseif command == 'disconnect' then
+            if #options ~= 3 then
+                d('Command expects two node ids')
+                return
+            end
+
+            local nodeA, nodeB = tonumber(options[2]), tonumber(options[3])
+
+            if nodeA == nil or nodeB == nil then
+                d('Node ids must be integers')
+                return
+            end
+
+            WMP_MAP_MAKER:RemoveConnection(nodeA, nodeB)
         elseif command == 'list' then
             WMP_Print(WMP_MAP_MAKER:GetMap():GetNodes())
         end
