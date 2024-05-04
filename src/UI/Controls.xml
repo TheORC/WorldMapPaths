@@ -1,0 +1,5 @@
+<GuiXml>
+	<Controls>
+		<Line name="WMPLink" thickness="8" virtual="true"/>
+	</Controls>
+</GuiXml>

@@ -1,0 +1,204 @@
+<GuiXml>
+  <Font name="WMP_Font" font="$(MEDIUM_FONT)|18"/>
+  <Font name="WMP_Default" font="ZoFontGame" color="f0f8ff"/>
+
+  <Controls>
+
+    <!-- Every control's name must be *unique*. -->
+    <TopLevelControl name="WMP_Debug_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
+      <Dimensions x="300" y="400"/>
+      <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-300" offsetY="50" />
+      <OnInitialized>WMP_DebugUI_OnInitialized(self)</OnInitialized>
+      <Controls>
+
+        <Backdrop name="$(parent)_BG" centerColor="000000" edgeColor="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" pixelRoundingEnabled="true">
+          <AnchorFill/>
+          <Edge edgeSize="1"/>
+        </Backdrop>
+
+        <Label name="$(parent)Headline" color="FFFFFF">
+          <Anchor point="TOP" relativePoint="TOP" relativeTo="$(parent)" offsetY="10"/>
+          <OnInitialized>self:SetText("|cFFAA33WMP Debug Menu|r");self:SetFont("ZoFontGameLargeBold");</OnInitialized>
+        </Label>
+
+        <!-- Add Button -->
+        <Control name="$(parent)AddRegion">
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="50"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)Add" inherits="ZO_DefaultButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Add()</OnClicked>
+              <Controls>
+                <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
+                  <Anchor point="CENTER" relativePoint="CENTER" />
+                  <OnInitialized>self:SetText("|cFFAA33Add|r")</OnInitialized>
+                </Label>
+              </Controls>
+            </Button>
+
+            <Button name="$(parent)ConnectLast" inherits="ZO_CheckButton" clickSound="Click">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Add" />
+              <OnInitialized>ZO_CheckButton_SetCheckState(self, true)</OnInitialized>
+              <Controls>
+                <Label name="$(parent)Text" font="ZoFontGame" color="f0f8ff" text="Connect">
+                  <Anchor point="LEFT" relativePoint="LEFT" offsetX="25"/>
+                </Label>
+              </Controls>
+            </Button>
+          </Controls>
+        </Control>
+
+        <!-- Remove Button -->
+        <Control name="$(parent)RemoveRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)AddRegion" offsetY="20"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)Remove" inherits="ZO_DefaultButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Remove()</OnClicked>
+              <Controls>
+                <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
+                  <Anchor point="CENTER" relativePoint="CENTER" />
+                  <OnInitialized>self:SetText("|cFFAA33Remove|r")</OnInitialized>
+                </Label>
+              </Controls>
+            </Button>
+
+            <Backdrop name="$(parent)RemoveEdit" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Remove" />
+              <Dimensions x="150"/>
+              <Controls>
+                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
+                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+                </EditBox>
+              </Controls>
+            </Backdrop>
+          </Controls>
+        </Control>
+
+        <!-- Connect Button -->
+        <Control name="$(parent)ConnectRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)RemoveRegion" offsetY="20"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)Connect" inherits="ZO_DefaultButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Connect()</OnClicked>
+              <Controls>
+                <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
+                  <Anchor point="CENTER" relativePoint="CENTER" />
+                  <OnInitialized>self:SetText("|cFFAA33Connect|r")</OnInitialized>
+                </Label>
+              </Controls>
+            </Button>
+
+            <Backdrop name="$(parent)Node1" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Connect" />
+              <Dimensions x="70"/>
+              <Controls>
+                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
+                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+                </EditBox>
+              </Controls>
+            </Backdrop>
+
+            <Backdrop name="$(parent)Node2" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Node1" offsetX="10"/>
+              <Dimensions x="70"/>
+              <Controls>
+                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
+                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+                </EditBox>
+              </Controls>
+            </Backdrop>
+
+          </Controls>
+        </Control>
+
+        <!-- Discconect Button -->
+        <Control name="$(parent)DisconnectRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)ConnectRegion" offsetY="20"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)Disconnect" inherits="ZO_DefaultButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Disconnect()</OnClicked>
+              <Controls>
+                <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
+                  <Anchor point="CENTER" relativePoint="CENTER" />
+                  <OnInitialized>self:SetText("|cFFAA33Disconnect|r")</OnInitialized>
+                </Label>
+              </Controls>
+            </Button>
+
+            <Backdrop name="$(parent)Node1" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Disconnect" />
+              <Dimensions x="70"/>
+              <Controls>
+                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
+                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+                </EditBox>
+              </Controls>
+            </Backdrop>
+
+            <Backdrop name="$(parent)Node2" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Node1" offsetX="10"/>
+              <Dimensions x="70"/>
+              <Controls>
+                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
+                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+                </EditBox>
+              </Controls>
+            </Backdrop>
+
+          </Controls>
+        </Control>
+
+        <Label name="$(parent)CopyTitle" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" font="ZoFontGame" text="Copy">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)DisconnectRegion" offsetX="10" offsetY="20"/>
+        </Label>
+
+        <Backdrop name="$(parent)Edit" inherits="ZO_MultiLineEditBackdrop_Keyboard">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)CopyTitle" offsetY="5"/>
+          <Dimensions x="260" y="100" />
+          <Controls>
+            <EditBox name="$(parent)CopyBox" inherits="ZO_DefaultEditForBackdrop">
+              <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+            </EditBox>
+          </Controls>
+        </Backdrop>
+
+        <Button name="$(parent)Save" inherits="ZO_DefaultButton">
+          <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" offsetX="20" offsetY="-15" />
+          <Dimensions x="120"/>
+          <OnClicked>WMP_DebugUI_Save()</OnClicked>
+          <Controls>
+            <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
+              <Anchor point="CENTER" relativePoint="CENTER" />
+              <OnInitialized>self:SetText("|cFFAA33Save|r")</OnInitialized>
+            </Label>
+          </Controls>
+        </Button>
+
+        <Button name="$(parent)Load" inherits="ZO_DefaultButton">
+          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" offsetX="-20" offsetY="-15"/>
+          <Dimensions x="120"/>
+          <OnClicked>WMP_DebugUI_Load()</OnClicked>
+          <Controls>
+            <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
+              <Anchor point="CENTER" relativePoint="CENTER" />
+              <OnInitialized>self:SetText("|cFFAA33Load|r")</OnInitialized>
+            </Label>
+          </Controls>
+        </Button>
+
+      </Controls>
+    </TopLevelControl>
+
+  </Controls>
+</GuiXml>

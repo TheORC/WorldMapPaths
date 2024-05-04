@@ -5,7 +5,7 @@
 ## AddOnVersion: 100
 ## Version: ${VERSION}
 ## SavedVariables: WorldMapPathsVars
-## DependsOn: LibAddonMenu-2.0
+## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS
 
 Structures/Vector.lua
 Structures/Node.lua
@@ -13,6 +13,16 @@ Structures/Map.lua
 
 Managers/Storage.lua
 Managers/MapMaker.lua
+
+UI/Line.lua
+UI/Path.lua
+UI/Controls.xml
+
+Dev/DebugRenderer.lua
+Dev/DebugUI.lua
+Dev/TestUI.lua
+Dev/DebugUI.xml
+Dev/TestUI.xml
 
 AStar.lua
 Test.lua

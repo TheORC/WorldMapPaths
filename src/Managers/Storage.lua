@@ -4,8 +4,12 @@
 ]]
 
 local dataVersion    = 1
+
+local MAP_KEY        = "maps"
+
 local storageDefault = {
-    ["settings"] = {}
+    ["settings"] = {},
+    [MAP_KEY] = {}
 }
 
 ---Helper class for managing plugin data.
@@ -29,6 +33,48 @@ end
 ---@param value any
 function WMP_Storage:SetSetting(settingName, value)
     self.storage["settings"][settingName] = value
+end
+
+---Stores a map in storage
+---@param map WMP_Map
+function WMP_Storage:StoreMap(map)
+    local index = self:FindMapIndex(map:GetZoneId())
+    local mapData = WMP_Map.MapToStorage(map)
+
+    if index ~= nil then
+        self.storage[MAP_KEY][index] = mapData
+    else
+        table.insert(self.storage[MAP_KEY], mapData)
+    end
+end
+
+---Loads a map from storage
+---@param zoneId integer
+---@return WMP_Map|nil
+function WMP_Storage:GetMap(zoneId)
+    local index = self:FindMapIndex(zoneId)
+
+    if index == nil then
+        return nil
+    end
+
+    local mapData = self.storage[MAP_KEY][index]
+    return WMP_Map.StorageToMap(mapData)
+end
+
+do
+    ---Find a zones data given it's id
+    ---@param zoneId integer
+    ---@return integer|nil
+    function WMP_Storage:FindMapIndex(zoneId)
+        for i, data in ipairs(self.storage[MAP_KEY]) do
+            if data["zoneId"] == zoneId then
+                return i
+            end
+        end
+
+        return nil
+    end
 end
 
 ---The WMP storage manager

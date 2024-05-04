@@ -1,19 +1,16 @@
----Method for generating a hash bassed on a nodes x and y positions.
----The has max size is set at 8 characters
----@param x number
----@param y number
+---Method for generating a random number which can be used for node ids.
 ---@return integer
-local function GenerateHash(x, y)
+local function GenerateId()
   return math.random(1, 1000000)
 end
 
 ---Creates a new node
+---@param nodeId integer
 ---@param position WMP_Vector
----@return integer nodeId, WMP_Node node
-local function CreateNode(position)
-  local nodeId = GenerateHash(position.x, position.y)
+---@return WMP_Node node
+local function GenerateNode(nodeId, position)
   ---@diagnostic disable-next-line: undefined-field
-  return nodeId, WMP_Node:New(nodeId, position)
+  return WMP_Node:New(nodeId, position)
 end
 
 ---Class representation of a map.
@@ -25,42 +22,37 @@ WMP_Map = ZO_InitializingObject:Subclass()
 function WMP_Map:Initialize(zoneId)
   self.zoneId = zoneId
 
-  ---A list of all the enterences into the map
-  ---@type WMP_Node[]
-  self.enterences = {}
-
   ---A list of all the map path nodes
   ---@type WMP_Node[]
   self.pathNodes = {}
 end
 
----Adds a new enterence node to the map
----@param enterencePosition WMP_Vector
----@return integer|nil nodeId, WMP_Node|nil node
-function WMP_Map:AddEnterence(enterencePosition)
-  -- Make sure the node does not already exist
-  if self:GetNode(GenerateHash(enterencePosition.x, enterencePosition.y)) ~= nil then
-    return nil, nil
-  end
-
-  local nodeId, node = CreateNode(enterencePosition)
-  table.insert(self.enterences, node)
-  return nodeId, node
-end
-
----Adds a new enterence node to the map
+---Create and add a new node to the map
 ---@param nodePosition WMP_Vector
 ---@return integer|nil nodeId, WMP_Node|nil node
-function WMP_Map:AddNode(nodePosition)
-  -- Make sure the node does not already exist
-  if self:GetNode(GenerateHash(nodePosition.x, nodePosition.y)) ~= nil then
-    return nil, nil
+function WMP_Map:CreateNode(nodePosition)
+  -- Get a unique id for this node
+  local nodeId = GenerateId()
+  while self:GetNode(nodeId) ~= nil do
+    nodeId = GenerateId()
   end
 
-  local nodeId, node = CreateNode(nodePosition)
+  local node = GenerateNode(nodeId, nodePosition)
   table.insert(self.pathNodes, node)
 
   return nodeId, node
+end
+
+---Adds a node to the map
+---@param node WMP_Node
+---@return integer|nil nodeId, WMP_Node|nil node
+function WMP_Map:AddNode(node)
+  -- This node already exists
+  if self:GetNode(node:GetId()) ~= nil then
+    return
+  end
+
+  table.insert(self.pathNodes, node)
 end
 
 ---Removes a node from the map. This method also removes any neighbour connections
@@ -134,12 +126,6 @@ function WMP_Map:GetNodeIndex(nodeId)
   return nil
 end
 
----Returns the enterences into the map
----@return WMP_Node[]
-function WMP_Map:GetEnterences()
-  return self.enterences
-end
-
 ---Returns the list of map path nodes
 ---@return WMP_Node[]
 function WMP_Map:GetNodes()
@@ -150,4 +136,69 @@ end
 ---@return integer
 function WMP_Map:GetZoneId()
   return self.zoneId
+end
+
+---Format a map so it can saved to storage
+---@param map WMP_Map
+---@return table
+function WMP_Map.MapToStorage(map)
+  local storage = {}
+  storage["zoneId"] = map:GetZoneId()
+  storage["nodes"] = {}
+
+  -- Loop through each node in the map and store it's data
+  for i, node in ipairs(map:GetNodes()) do
+    local n, position = {}, node:GetPosition()
+    n["id"] = node:GetId()
+    n["position"] = { ["x"] = position.x, ["y"] = position.y }
+    n["neighbours"] = {}
+
+    -- Loop through this nodes neighbours and store
+    for j, neighbour in ipairs(node:GetNeighbours()) do
+      table.insert(n["neighbours"], neighbour:GetId())
+    end
+
+    table.insert(storage["nodes"], n)
+  end
+
+  return storage
+end
+
+---Creates a map from stored map data
+---@param mapData table
+---@return WMP_Map
+function WMP_Map.StorageToMap(mapData)
+  local zoneId = mapData["zoneId"]
+  local nodes = mapData["nodes"]
+
+  local allConnections = {}
+
+  ---@type WMP_Map
+  ---@diagnostic disable-next-line: undefined-field
+  local newMap = WMP_Map:New(zoneId)
+
+  -- Load all nodes from storage
+  for _, node in ipairs(nodes) do
+    -- Parse information
+    local nodeId, position, neighbours = node["id"], node["position"], node["neighbours"]
+
+    -- Create node
+    ---@diagnostic disable-next-line: undefined-field
+    local newNode = WMP_Node:New(nodeId, WMP_Vector:New(position.x, position.y))
+
+    -- Store node connections
+    for _, neighbourId in ipairs(neighbours) do
+      table.insert(allConnections, { [1] = nodeId, [2] = neighbourId })
+    end
+
+    -- Add to map
+    newMap:AddNode(newNode)
+  end
+
+  -- Constrct map connections
+  for _, connection in ipairs(allConnections) do
+    newMap:AddConnection(connection[1], connection[2])
+  end
+
+  return newMap
 end

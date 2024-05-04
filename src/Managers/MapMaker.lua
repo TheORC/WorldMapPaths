@@ -15,6 +15,9 @@ end
 ---Creates a new vector at the players current map position
 ---@return WMP_Vector
 local function newVectorAtPosition()
+  -- Always set the map to the player location
+  SetMapToPlayerLocation()
+
   local x, y = GetMapPlayerPosition("player")
   ---@diagnostic disable-next-line: undefined-field
   return WMP_Vector:New(x, y)
@@ -51,7 +54,7 @@ end
 function WMP_Map_Maker:Reset()
   self.map = nil
   self.previousNode = nil
-  d('Reset map maker')
+  self:OnUpdate()
 end
 
 ---Adds a new zone to the zone map. If `connect_previous` is set to true, the new node will be set
@@ -71,7 +74,7 @@ function WMP_Map_Maker:AddNode(connect_previous)
   end
 
   local position = newVectorAtPosition()
-  local nodeId, node = self.map:AddNode(position)
+  local nodeId, node = self.map:CreateNode(position)
 
   if nodeId == nil or node == nil then
     d('Failed to add a node')
@@ -86,6 +89,8 @@ function WMP_Map_Maker:AddNode(connect_previous)
   end
 
   self.previousNode = nodeId
+
+  self:OnUpdate()
 end
 
 ---Removes a node with the specified node from the current map
@@ -104,6 +109,8 @@ function WMP_Map_Maker:RemoveNode(nodeId)
   end
 
   d('Removed node (' .. nodeId .. ')')
+
+  self:OnUpdate()
 end
 
 ---Adds a connection between two nodes
@@ -118,6 +125,8 @@ function WMP_Map_Maker:AddConnection(nodeIdA, nodeIdB)
 
   self.map:AddConnection(nodeIdA, nodeIdB)
   d('Added connection between ' .. nodeIdA .. ' and ' .. nodeIdB)
+
+  self:OnUpdate()
 end
 
 ---Removes a connection between two nodes
@@ -132,12 +141,47 @@ function WMP_Map_Maker:RemoveConnection(nodeIdA, nodeIdB)
 
   self.map:RemoveConnection(nodeIdA, nodeIdB)
   d('Removed connection between ' .. nodeIdA .. ' and ' .. nodeIdB)
+
+  self:OnUpdate()
+end
+
+---Saves the current map to the storage
+function WMP_Map_Maker:Save()
+  if self.map == nil then
+    d("There is no map data to be saved")
+    return
+  end
+
+  -- Store the map
+  WMP_STORAGE:StoreMap(self.map)
+  d("Map saved.")
+end
+
+---Lodas the current zone map from storage
+function WMP_Map_Maker:Load()
+  self:Reset()
+  local map = WMP_STORAGE:GetMap(getPlayerZone())
+
+  if map == nil then
+    d("No map data found for this zone.")
+    return
+  end
+
+  -- Set the map
+  self.map = map
+  d("Map loaded.")
 end
 
 ---Returns the map.
 ---@return WMP_Map|nil
 function WMP_Map_Maker:GetMap()
   return self.map
+end
+
+do
+  function WMP_Map_Maker:OnUpdate()
+    WMP_DEBUG_RENDERER:Draw()
+  end
 end
 
 ---@type WMP_Map_Maker

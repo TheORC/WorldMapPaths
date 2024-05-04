@@ -2,7 +2,12 @@
 --- @author: AnotherORC
 ---
 
+
+local GPS = LibGPS3
+
+
 local WMP = {}
+
 
 WMP_SETTINGS = {
     NAME         = "WorldMapPaths",
@@ -10,6 +15,7 @@ WMP_SETTINGS = {
     VERSION      = "${VERSION}",
     AUTHOR       = "AnotherORC",
 }
+
 
 ---Takes a string and splits it into words
 ---@param args string
@@ -36,6 +42,13 @@ local function OnAddonLoad(_, name)
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
 
+    -- Load our storage
+    WMP_STORAGE:LoadData()
+
+    WMP_MAP_MAKER:Load()
+    WMP_DEBUG_RENDERER:SetMap(WMP_MAP_MAKER:GetMap())
+    WMP_DEBUG_RENDERER:Draw()
+
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)
 
@@ -47,7 +60,10 @@ local function OnAddonLoad(_, name)
             d('/wmp remove %1 - remove a node from the map.')
             d('/wmp connect %1 %2 - connect two nodes together')
             d('/wmp disconnect %1 %2 - remove the connection between two nodes')
+            d('/wmp load - loads the current zone if it exists')
+            d('/wmp save - saves the current zone to storage')
             d('/wmp list - list all the map nodes')
+            d('/wmp draw - draw the current map')
             return
         end
 
@@ -103,7 +119,26 @@ local function OnAddonLoad(_, name)
 
             WMP_MAP_MAKER:RemoveConnection(nodeA, nodeB)
         elseif command == 'list' then
+            if WMP_MAP_MAKER:GetMap() == nil then
+                d("No map loaded")
+                return
+            end
+
             WMP_Print(WMP_MAP_MAKER:GetMap():GetNodes())
+        elseif command == 'draw' then
+            if WMP_MAP_MAKER:GetMap() == nil then
+                d("No map to draw")
+                return
+            end
+
+            WMP_DEBUG_RENDERER:SetMap(WMP_MAP_MAKER:GetMap())
+            WMP_DEBUG_RENDERER:Draw()
+        elseif command == 'save' then
+            WMP_MAP_MAKER:Save()
+        elseif command == 'load' then
+            WMP_MAP_MAKER:Load()
+        elseif command == 'test' then
+            WMP_Run_Tests()
         end
     end
 end
