@@ -2,11 +2,12 @@
 --- @author: AnotherORC
 ---
 
-
 local PingLib = LibMapPing2
 local GPS = LibGPS3
 
 local WMP = {}
+local IS_DEBUG = true
+
 WMP_SETTINGS = {
     NAME         = "WorldMapPaths",
     DISPLAY_NAME = "World Map Paths",
@@ -14,6 +15,13 @@ WMP_SETTINGS = {
     AUTHOR       = "AnotherORC",
 }
 
+---Helper function for getting the players current zone
+---@return integer
+local function getPlayerZone()
+    local zoneId, _, _, _ = GetUnitWorldPosition("player")
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return zoneId
+end
 
 ---Takes a string and splits it into words
 ---@param args string
@@ -36,6 +44,7 @@ end
 local function handleMapPing(pingType, pingTag, x, y, isPingOwner)
     -- We are not the owner or there is not a map
     if not isPingOwner or not WMP_MAP_MAKER:GetMap() then
+        d('Here')
         return
     end
 
@@ -53,11 +62,14 @@ local function handleMapPing(pingType, pingTag, x, y, isPingOwner)
         return
     end
 
-    WMP_DEBUG_RENDERER:Reset()
+    WMP_DEBUG_RENDERER:Clear()
     WMP_DEBUG_RENDERER:DrawPath(startNode:GetId(), endNode:GetId())
 end
 
 local function OnMapChanged(didZoomIn)
+    CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", OnMapChanged)
+    CALLBACK_MANAGER:RegisterCallback("OnWorldMapModeChanged", OnMapChanged)
+
     -- Normal = 1, Cyrodiil = 2, Imperial = 3
     local mapFilterType = GetMapFilterType()
     local mode = WORLD_MAP_MANAGER:GetMode()
@@ -75,6 +87,43 @@ local function OnMapChanged(didZoomIn)
     end
 end
 
+---Calculates the shortest path between two points on a map
+---@param map WMP_Map
+---@param startId number
+---@param goalId number
+---@return WMP_Path|nil
+local function CaluclateShortestPath(map, startId, goalId)
+    ---@type WMP_Path
+    local path = WMP_Path:New()
+
+    local start = map:GetNode(startId)
+    local goal = map:GetNode(goalId)
+
+    if start == nil or goal == nil then
+        d("Unable to find node ids in map")
+        return nil
+    end
+
+    local shortestPath = WMP_Calculate(start, goal)
+
+    if shortestPath == nil then
+        d("Unabel to find shortest path")
+        return nil
+    end
+
+    -- Loop through the short path and create lines
+    if #shortestPath > 2 then
+        for i = 2, #shortestPath do
+            local lineEnd = shortestPath[i - 1]
+            local lineStart = shortestPath[i]
+
+            path:AddLine(WMP_Line:New(lineStart:GetLocalPosition(), lineEnd:GetLocalPosition()))
+        end
+    end
+
+    return path
+end
+
 ---This method os called when the addon is loadded for the first time
 ---@param _ nil
 ---@param name string
@@ -83,27 +132,26 @@ local function OnAddonLoad(_, name)
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
 
-    EVENT_MANAGER:RegisterForEvent(WMP_SETTINGS.NAME .. "world", EVENT_SHOW_WORLD_MAP, function()
-        d("World shown")
-    end)
-
-    EVENT_MANAGER:RegisterForEvent(WMP_SETTINGS.NAME .. "change", EVENT_ZONE_CHANGED,
-        function(_, zoneName, subzonName, a, b)
-            d(zoneName, subzonName, a, b)
-        end)
-
-    CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", OnMapChanged)
-    CALLBACK_MANAGER:RegisterCallback("OnWorldMapModeChanged", OnMapChanged)
-
     -- Listen for ping add events
-    PingLib:RegisterCallback("AfterPingAdded", handleMapPing)
+    -- PingLib:RegisterCallback("AfterPingAdded", handleMapPing)
 
     -- Load our storage
     WMP_STORAGE:LoadData()
 
-    WMP_MAP_MAKER:Load()
-    WMP_DEBUG_RENDERER:SetMap(WMP_MAP_MAKER:GetMap())
-    WMP_DEBUG_RENDERER:Draw()
+    --- Load the map maker
+    -- WMP_MAP_MAKER:Load()
+
+    local map = WMP_STORAGE:GetMap(getPlayerZone())
+    if map then
+        local path = CaluclateShortestPath(map, 839473, 842311)
+
+        if path then
+            ---@type WMP_Path_Render
+            local pathRenderer = WMP_Path_Render:New()
+            pathRenderer:SetPath(path)
+            pathRenderer:Draw()
+        end
+    end
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)

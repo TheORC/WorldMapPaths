@@ -7,24 +7,26 @@
 ## SavedVariables: WorldMapPathsVars
 ## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS>=30 LibMapPing
 
-Structures/Vector.lua
-Structures/Node.lua
-Structures/Map.lua
-
-Managers/Storage.lua
-Managers/MapMaker.lua
+utils/AStar.lua
+utils/Structures/Vector.lua
+utils/Structures/Node.lua
+utils/Structures/Map.lua
+utils/Renderers/Renderer.lua
+utils/Renderers/DebugRenderer.lua
+utils/Renderers/PathRenderer.lua
 
 UI/Line.lua
 UI/Path.lua
 UI/Controls.xml
 
-Dev/DebugRenderer.lua
+Managers/Storage.lua
+
+Dev/MapMaker.lua
 Dev/DebugUI.lua
 Dev/TestUI.lua
 Dev/DebugUI.xml
 Dev/TestUI.xml
 
-AStar.lua
 Test.lua
 
 WMP.lua

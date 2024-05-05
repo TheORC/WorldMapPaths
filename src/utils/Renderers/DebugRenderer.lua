@@ -13,6 +13,19 @@ function WMP_Debug_Render:Initialize()
 
   self.map = nil
 
+  -- hack into the SetDimensions function as we need to scale the displayed path whenever the user zooms in/out
+  local oldDimensions = ZO_WorldMapContainer.SetDimensions
+  ZO_WorldMapContainer.SetDimensions = function(container, mapWidth, mapHeight, ...)
+    local links = self.linkPool:GetActiveObjects()
+    local startX, startY, endX, endY
+    for _, link in pairs(links) do
+      startX, startY, endX, endY = link.startX * mapWidth, link.startY * mapHeight, link.endX * mapWidth,
+          link.endY * mapHeight
+      ZO_Anchor_LineInContainer(link, nil, startX, startY, endX, endY)
+    end
+    oldDimensions(container, mapWidth, mapHeight, ...)
+  end
+
   self:CreatePinType()
 
   CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", function()
@@ -22,7 +35,8 @@ end
 
 ---Clears the current draw map and redraws it
 function WMP_Debug_Render:Clear()
-  WMP_Renderer.Clear(self)
+  -- Release old path
+  self.linkPool:ReleaseAllObjects()
   LMP:RemoveCustomPin(PIN_TYPE)
 end
 
