@@ -1,3 +1,5 @@
+local GPS = LibGPS3
+
 ---Helper function for getting the players current zone
 ---@return integer
 local function getPlayerZone()
@@ -19,8 +21,10 @@ local function newVectorAtPosition()
   SetMapToPlayerLocation()
 
   local x, y = GetMapPlayerPosition("player")
+  local gX, gY = GPS:LocalToGlobal(x, y)
+
   ---@diagnostic disable-next-line: undefined-field
-  return WMP_Vector:New(x, y)
+  return WMP_Vector:New(gX, gY)
 end
 
 ---Helper class for creating map path nodes.

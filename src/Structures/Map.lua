@@ -126,6 +126,22 @@ function WMP_Map:GetNodeIndex(nodeId)
   return nil
 end
 
+---Calculates the node with the shortest distance tot he position
+---@param pos WMP_Vector
+---@return WMP_Node|nil
+function WMP_Map:GetClosesNode(pos)
+  local closest, node = 1 / 0, nil
+  for _, n in ipairs(self:GetNodes()) do
+    local distance = WMP_Vector.dist(pos, n:GetLocalPosition())
+    if distance < closest then
+      closest = distance
+      node = n
+    end
+  end
+
+  return node
+end
+
 ---Returns the list of map path nodes
 ---@return WMP_Node[]
 function WMP_Map:GetNodes()

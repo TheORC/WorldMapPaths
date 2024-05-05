@@ -16,7 +16,8 @@ end
 
 function WMP_Test_Menu:Render()
   local start, goal = tonumber(self.m_start:GetText()), tonumber(self.m_goal:GetText())
-  WMP_DEBUG_RENDERER:Draw(start, goal)
+  WMP_DEBUG_RENDERER:Reset()
+  WMP_DEBUG_RENDERER:DrawPath(start, goal)
 end
 
 ---Get the Debug UI menu

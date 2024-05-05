@@ -22,6 +22,8 @@ function WMP_Debug_Menu:Initialize(control)
 
   self.m_disconnectAEdit = control:GetNamedChild("DisconnectRegionNode1Edit")
   self.m_disconnectBEdit = control:GetNamedChild("DisconnectRegionNode2Edit")
+
+  self.m_saveButtonText = control:GetNamedChild("SaveText")
 end
 
 ---Set the contents of the copy edit field
@@ -34,6 +36,7 @@ end
 function WMP_Debug_Menu:AddNode()
   local connectLast = ZO_CheckButton_IsChecked(self.m_connectLast)
   WMP_MAP_MAKER:AddNode(connectLast)
+  self:OnMapUpdate()
 end
 
 ---Method called to remove a node from the map
@@ -46,6 +49,7 @@ function WMP_Debug_Menu:RemoveNode()
   end
 
   WMP_MAP_MAKER:RemoveNode(nodeId)
+  self:OnMapUpdate()
 end
 
 ---Method called to connect two nodes on the map
@@ -58,6 +62,7 @@ function WMP_Debug_Menu:ConnectNodes()
   end
 
   WMP_MAP_MAKER:AddConnection(nodeAId, nodeBId)
+  self:OnMapUpdate()
 end
 
 ---Method called to disconnect two nodes on the map
@@ -70,6 +75,18 @@ function WMP_Debug_Menu:DisconnectNodes()
   end
 
   WMP_MAP_MAKER:RemoveConnection(nodeAId, nodeBId)
+  self:OnMapUpdate()
+end
+
+do
+  ---Called when a change is made to the current map
+  function WMP_Debug_Menu:OnMapUpdate()
+    self.m_saveButtonText:SetColor(1, 0, 0, 1)
+  end
+
+  function WMP_Debug_Menu:OnMapSave()
+    self.m_saveButtonText:SetColor(1, 1, 1, 1)
+  end
 end
 
 ---Get the Debug UI menu
@@ -117,9 +134,28 @@ function WMP_DebugUI_Disconnect()
   WMP_GetDebugMenu():DisconnectNodes()
 end
 
+---Method called when the show point setting is updated
+function WMP_DebugUI_Setting_ShowPoint(self)
+  local showPoint = not ZO_CheckButton_IsChecked(self)
+  ZO_CheckButton_SetCheckState(self, showPoint)
+
+  WMP_STORAGE:SetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_POINT, showPoint)
+  WMP_DEBUG_RENDERER:Draw()
+end
+
+---Method called when the show path setting is updated
+function WMP_DebugUI_Setting_ShowPath(self)
+  local showPath = not ZO_CheckButton_IsChecked(self)
+  ZO_CheckButton_SetCheckState(self, showPath)
+
+  WMP_STORAGE:SetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_PATH, showPath)
+  WMP_DEBUG_RENDERER:Draw()
+end
+
 ---Method called to connect to nodes on the map
 function WMP_DebugUI_Save()
   WMP_MAP_MAKER:Save()
+  WMP_Debug_UI.m_object:OnMapSave()
 end
 
 ---Method called to connect to nodes on the map

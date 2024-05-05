@@ -1,3 +1,5 @@
+local GPS = LibGPS3
+
 ---Search through a list of neighbours to see if the specified one already exists.
 ---@param neighbours WMP_Node[]
 ---@param target WMP_Node
@@ -54,6 +56,12 @@ function WMP_Node:RemoveNeighbour(neighbour)
   end
 end
 
+---Set's the position for this node
+---@param pos WMP_Vector
+function WMP_Node:SetPosition(pos)
+  self.m_position = pos
+end
+
 ---Returns the list of neighbours connected to this node.
 ---@return WMP_Node[]
 function WMP_Node:GetNeighbours()
@@ -64,6 +72,13 @@ end
 ---@return WMP_Vector
 function WMP_Node:GetPosition()
   return self.m_position
+end
+
+---Returns the node's local position based on the current active zone.
+---@return WMP_Vector
+function WMP_Node:GetLocalPosition()
+  local gX, gy = GPS:GlobalToLocal(self.m_position.x, self.m_position.y)
+  return WMP_Vector:New(gX, gy)
 end
 
 ---Get the nodes id.

@@ -5,7 +5,7 @@
 ## AddOnVersion: 100
 ## Version: ${VERSION}
 ## SavedVariables: WorldMapPathsVars
-## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS
+## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS>=30 LibMapPing
 
 Structures/Vector.lua
 Structures/Node.lua

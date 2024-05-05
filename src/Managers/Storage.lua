@@ -12,6 +12,11 @@ local storageDefault = {
     [MAP_KEY] = {}
 }
 
+WMP_SETTING_KEYS     = {
+    DEBUG_DRAW_POINT = "DEBUG_DRAW_POINT",
+    DEBUG_DRAW_PATH = "DEBUG_DRAW_PATH"
+}
+
 ---Helper class for managing plugin data.
 ---@class WMP_Storage
 local WMP_Storage    = ZO_InitializingObject:Subclass()

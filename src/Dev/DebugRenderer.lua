@@ -50,17 +50,47 @@ function WMP_Debug_Render:Reset()
   LMP:RemoveCustomPin(PIN_TYPE)
 end
 
----Draw the map
----@param startId number|nil
----@param goalId number|nil
-function WMP_Debug_Render:Draw(startId, goalId)
+---Draws the current map information
+function WMP_Debug_Render:Draw()
+  -- Clear the old render
+  self:Reset()
+
   if self.map == nil then
     return
   end
 
-  -- Clear the old render
-  self:Reset()
+  if WMP_STORAGE:GetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_POINT) then
+    self:DrawPoints()
+  end
 
+  if WMP_STORAGE:GetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_PATH) then
+    self:DrawPath()
+  end
+end
+
+---Draws all the points on the current map
+function WMP_Debug_Render:DrawPoints()
+  local call_later = function()
+    -- All the nodes on the map
+    local nodes = WMP_MAP_MAKER:GetMap():GetNodes()
+
+    for _, node in ipairs(nodes) do
+      local nodePos = node:GetLocalPosition()
+
+      LMP:CreatePin(PIN_TYPE, {
+        node_id = node:GetId(),
+      }, nodePos.x, nodePos.y, nil)
+    end
+  end
+
+  -- Wait so the map is loaded
+  zo_callLater(call_later, 10)
+end
+
+---Draws a path on the current map
+---@param startId number|nil
+---@param goalId number|nil
+function WMP_Debug_Render:DrawPath(startId, goalId)
   if not startId or not goalId then
     self:CaluclatePath()
   else
@@ -71,18 +101,6 @@ function WMP_Debug_Render:Draw(startId, goalId)
   local linkControl, startX, startY, endX, endY
   local mapWidth, mapHeight = ZO_WorldMapContainer:GetDimensions()
 
-  d('draw points')
-  -- All the nodes on the map
-  local nodes = WMP_MAP_MAKER:GetMap():GetNodes()
-
-  for _, node in ipairs(nodes) do
-    LMP:CreatePin(PIN_TYPE, {
-      node_id = node:GetId(),
-    }, node:GetPosition().x, node:GetPosition().y, nil)
-  end
-
-  d('draw lines')
-
   -- Loop through new path
   for i, line in ipairs(self.path:GetLines()) do
     linkControl = self.linkPool:AcquireObject()
@@ -90,17 +108,20 @@ function WMP_Debug_Render:Draw(startId, goalId)
     linkControl.startX, linkControl.startY = line:GetStartPos()
     linkControl.endX, linkControl.endY = line:GetEndPos()
 
-    if linkControl.startX < linkControl.endX then
-      linkControl:SetTexture("WorldMapPaths/Textures/tour_r.dds")
-    else
-      linkControl:SetTexture("WorldMapPaths/Textures/tour_l.dds")
-    end
-
-    linkControl:SetColor(1, 0, 0, 1)
-    linkControl:SetDrawLevel(10)
+    --if linkControl.startX < linkControl.endX then
+    --  linkControl:SetTexture("WorldMapPaths/Textures/tour_r.dds")
+    --else
+    --  linkControl:SetTexture("WorldMapPaths/Textures/tour_l.dds")
+    --end
+    linkControl:SetTexture("EsoUI/Art/AvA/AvA_transitLine.dds")
+    -- 237, 177, 38
+    -- linkControl:SetColor(0.8705883026123, 0.35686275362968, 0.30588236451149, 1)
+    linkControl:SetColor(1, 1, 1, 1)
+    linkControl:SetDrawLevel(1)
 
     startX, startY = linkControl.startX * mapWidth, linkControl.startY * mapHeight
     endX, endY = linkControl.endX * mapWidth, linkControl.endY * mapHeight
+
     ZO_Anchor_LineInContainer(linkControl, nil, startX, startY, endX, endY)
   end
 end
@@ -119,7 +140,6 @@ do
 
     -- Check to see if we should draw in this zone.
     if self.map:GetZoneId() == zoneId then
-      d('same zone, time to draw')
       self:Draw()
     end
   end
@@ -137,7 +157,7 @@ do
     -- Set the pin click handler
     LMP:SetClickHandlers(PIN_TYPE, {
       {
-        name = "Path Node Waypoint",
+        name = "Path Node",
         callback = function(pin)
           local _, pinData = pin:GetPinTypeAndTag()
           WMP_DebugUI_SetCopytext(pinData.node_id)
@@ -154,7 +174,7 @@ do
     -- Get a path between all the nodes
     for _, node in ipairs(self.map:GetNodes()) do
       for _, neighbour in ipairs(node:GetNeighbours()) do
-        path:AddLine(WMP_Line:New(node:GetPosition(), neighbour:GetPosition()))
+        path:AddLine(WMP_Line:New(node:GetLocalPosition(), neighbour:GetLocalPosition()))
       end
     end
 
@@ -168,15 +188,26 @@ do
 
     local start = WMP_MAP_MAKER:GetMap():GetNode(startId)
     local goal = WMP_MAP_MAKER:GetMap():GetNode(goalId)
+
+    if start == nil or goal == nil then
+      d("Unable to find node ids in map")
+      return
+    end
+
     local shortestPath = WMP_Calculate(start, goal)
+
+    if shortestPath == nil then
+      d("Unabel to find shortest path")
+      return
+    end
 
     -- Loop through the short path and create lines
     if #shortestPath > 2 then
       for i = 2, #shortestPath do
-        local lineStart = shortestPath[i - 1]
-        local lineEnd = shortestPath[i]
+        local lineEnd = shortestPath[i - 1]
+        local lineStart = shortestPath[i]
 
-        path:AddLine(WMP_Line:New(lineStart:GetPosition(), lineEnd:GetPosition()))
+        path:AddLine(WMP_Line:New(lineStart:GetLocalPosition(), lineEnd:GetLocalPosition()))
       end
     end
 
