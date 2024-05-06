@@ -230,12 +230,12 @@ local function OnAddonLoad(_, name)
 
             WMP_Print(WMP_MAP_MAKER:GetMap():GetNodes())
         elseif command == 'draw' then
-            if WMP_MAP_MAKER:GetMap() == nil then
+            if map == nil then
                 d("No map to draw")
                 return
             end
 
-            WMP_DEBUG_RENDERER:SetMap(WMP_MAP_MAKER:GetMap())
+            WMP_DEBUG_RENDERER:SetMap(map)
             WMP_DEBUG_RENDERER:Draw()
         elseif command == 'save' then
             WMP_MAP_MAKER:Save()

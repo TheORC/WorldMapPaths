@@ -26,7 +26,6 @@ Dev/DebugUI.lua
 Dev/TestUI.lua
 Dev/DebugUI.xml
 Dev/TestUI.xml
-
-Test.lua
+Dev/Test.lua
 
 WMP.lua
