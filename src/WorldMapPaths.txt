@@ -9,7 +9,6 @@
 
 utils/AStar.lua
 utils/Structures/Vector.lua
-utils/Structures/MapVector.lua
 utils/Structures/Node.lua
 utils/Structures/Map.lua
 utils/Renderers/Renderer.lua

@@ -12,7 +12,7 @@ local GPS = LibGPS3
 ---@field renderer WMP_Renderer
 ---@field map WMP_Map
 ---@field is_debug boolean
----@field player_target WMP_MVector
+---@field player_target WMP_Vector
 local WMP_Map_Manager = ZO_InitializingObject:Subclass()
 
 function WMP_Map_Manager:Initialize()
@@ -49,8 +49,8 @@ end
 ---@param y number
 ---@param isPingOwner boolean
 function WMP_Map_Manager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
-  self.player_target = WMP_MVector:New(x, y, false)
-  self:DrawPath(WMP_MVector:New(x, y, false))
+  self.player_target = WMP_Vector:New(GPS:LocalToGlobal(x, y))
+  self:DrawPath(self.player_target)
 end
 
 ---Method called everytime a ping is removed from the map
@@ -78,24 +78,27 @@ function WMP_Map_Manager:OnMapChanged()
 
   -- Load the current map
   self:LoadZone(self:GetCurrentZoneId())
+
+  -- We have a target draw it
+  if self.player_target then
+    self:DrawPath(self.player_target)
+  end
 end
 
 ---Method called to draw the path on the map
----@param target WMP_MVector
+---@param target WMP_Vector
 function WMP_Map_Manager:DrawPath(target)
   if not self.map or not target then
     return;
   end
 
   local startPos = self:GetPlayerPosition()
-  local endPos = target
+  local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
-
-  local pathStart = self.map:GetClosesNode(WMP_MVector.ToLocal(startPos))
-  local pathEnd = self.map:GetClosesNode(WMP_MVector.ToLocal(endPos))
+  local pathStart = self.map:GetClosesNode(startPos)
+  local pathEnd = self.map:GetClosesNode(endPos)
 
   if not pathStart or not pathEnd then
-    d('Unable to find path')
     return
   end
 
@@ -154,10 +157,9 @@ do
   end
 
   ---Get's the player current location
-  ---@return WMP_MVector
+  ---@return WMP_Vector
   function WMP_Map_Manager:GetPlayerPosition()
-    local playerX, playerY = GetMapPlayerPosition("player")
-    return WMP_MVector:New(playerX, playerY, false)
+    return WMP_Vector:New(GetMapPlayerPosition("player"))
   end
 end
 
