@@ -12,6 +12,8 @@ WMP_SETTINGS = {
     AUTHOR       = "AnotherORC",
 }
 
+WMP_ADD_NODE_TEXT = "Add node"
+
 ---Takes a string and splits it into words
 ---@param args string
 ---@return string[]
@@ -36,6 +38,10 @@ local function OnAddonLoad(_, name)
     -- Check if this is our addon
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
+
+    ZO_CreateStringId("WMP_ADD_NODE_TEXT", WMP_ADD_NODE_TEXT)
+    SafeAddVersion("WMP_ADD_NODE_TEXT", 1)
+    ZO_CreateStringId("SI_BINDING_NAME_WMP_ADD_NODE", GetString(WMP_ADD_NODE_TEXT))
 
     -- Load our storage
     WMP_STORAGE:LoadData()

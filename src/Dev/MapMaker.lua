@@ -49,9 +49,14 @@ function WMP_Map_Maker:Start()
     return
   end
 
-  ---@diagnostic disable-next-line: undefined-field
-  self.map = WMP_Map:New(getPlayerZone())
-  d('Map maker running for zone: ' .. self.map:GetZoneId())
+  if WMP_STORAGE:GetMap(getPlayerZone()) then
+    d('Existing map found, loading it: ' .. getPlayerZone())
+    self.map = WMP_STORAGE:GetMap(getPlayerZone())
+  else
+    d('Map maker running for zone: ' .. getPlayerZone())
+    ---@diagnostic disable-next-line: undefined-field
+    self.map = WMP_Map:New(getPlayerZone())
+  end
 end
 
 ---Resets the map maker for another round
@@ -113,7 +118,6 @@ function WMP_Map_Maker:RemoveNode(nodeId)
   end
 
   d('Removed node (' .. nodeId .. ')')
-
   self:OnUpdate()
 end
 

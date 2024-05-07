@@ -16,9 +16,10 @@ local GPS = LibGPS3
 local WMP_Map_Manager = ZO_InitializingObject:Subclass()
 
 function WMP_Map_Manager:Initialize()
-  self.renderer = WMP_Path_Render:New()
+  self.renderer = WMP_Path_Render:New() -- WMP_DEBUG_RENDERER -- WMP_Path_Render:New()
+  self.is_debug = false                 -- TODO: make this changeable
+
   self.map = nil
-  self.is_debug = false
   self.player_target = nil
 end
 
@@ -80,7 +81,7 @@ function WMP_Map_Manager:OnMapChanged()
   self:LoadZone(self:GetCurrentZoneId())
 
   -- We have a target draw it
-  if self.player_target then
+  if self.player_target or self.is_debug then
     self:DrawPath(self.player_target)
   end
 end
@@ -88,15 +89,21 @@ end
 ---Method called to draw the path on the map
 ---@param target WMP_Vector
 function WMP_Map_Manager:DrawPath(target)
-  if not self.map or not target then
+  -- The render handles most of this logic itself.
+  if self.is_debug then
+    self.renderer:Draw()
+    return
+  end
+
+  if not self:GetMap() or not target then
     return;
   end
 
   local startPos = self:GetPlayerPosition()
   local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
-  local pathStart = self.map:GetClosesNode(startPos)
-  local pathEnd = self.map:GetClosesNode(endPos)
+  local pathStart = self:GetMap():GetClosesNode(startPos)
+  local pathEnd = self:GetMap():GetClosesNode(endPos)
 
   if not pathStart or not pathEnd then
     return
@@ -113,9 +120,19 @@ function WMP_Map_Manager:ToggleDebug()
   self.is_debug = not self.is_debug
 
   if self.is_debug then
-    self.renderer = WMP_Debug_Render:New()
+    self.renderer = WMP_DEBUG_RENDERER
   else
     self.renderer = WMP_Path_Render:New()
+  end
+end
+
+---Returns the current map
+---@return WMP_Map
+function WMP_Map_Manager:GetMap()
+  if self.is_debug then
+    return WMP_MAP_MAKER:GetMap()
+  else
+    return self.map
   end
 end
 
@@ -123,15 +140,18 @@ do
   ---Load the zone with the specified id.
   ---@param zoneId integer
   function WMP_Map_Manager:LoadZone(zoneId)
+    -- Not responsible for the map in debug
+    if self.is_debug then
+      return
+    end
+
     -- Don't load the map if it's already loaded
     if self.map and self.map:GetZoneId() == zoneId then
       return
     end
 
     local map = WMP_STORAGE:GetMap(zoneId)
-
     if map then
-      d('Map loaded: ' .. zoneId)
       self.map = map
     end
   end

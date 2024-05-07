@@ -31,3 +31,4 @@ Dev/TestUI.xml
 Dev/Test.lua
 
 WMP.lua
+bindings.xml
