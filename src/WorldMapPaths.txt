@@ -9,6 +9,7 @@
 
 utils/AStar.lua
 utils/Structures/Vector.lua
+utils/Structures/MapVector.lua
 utils/Structures/Node.lua
 utils/Structures/Map.lua
 utils/Renderers/Renderer.lua
@@ -17,9 +18,11 @@ utils/Renderers/PathRenderer.lua
 
 UI/Line.lua
 UI/Path.lua
+UI/ZonePath.lua
 UI/Controls.xml
 
 Managers/Storage.lua
+Managers/MapManager.lua
 
 Dev/MapMaker.lua
 Dev/DebugUI.lua

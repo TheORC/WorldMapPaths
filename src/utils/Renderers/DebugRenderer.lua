@@ -5,7 +5,7 @@ local PIN_TYPE = "WMP_Marker"
 
 ---Class for creating a debug renderer
 ---@class WMP_Debug_Render : WMP_Renderer
-local WMP_Debug_Render = WMP_Renderer:Subclass()
+WMP_Debug_Render = WMP_Renderer:Subclass()
 
 ---Initializes a new renderer
 function WMP_Debug_Render:Initialize()
@@ -210,6 +210,3 @@ do
     self.path = path
   end
 end
-
----@type WMP_Debug_Render
-WMP_DEBUG_RENDERER = WMP_Debug_Render:New()

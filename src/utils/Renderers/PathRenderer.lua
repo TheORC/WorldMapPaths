@@ -8,11 +8,12 @@ end
 
 ---Method for drawing the provided path on the current map
 function WMP_Path_Render:Draw()
+  self:Clear()
+
   if self.path == nil then
     return
   end
 
-  self:Clear()
   self:DrawPath()
 end
 
