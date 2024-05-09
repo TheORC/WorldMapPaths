@@ -21,7 +21,7 @@ UI/ShortestPath.lua
 UI/ZonePath.lua
 UI/Controls.xml
 
-Managers/Storage.luam
+Managers/Storage.lua
 Managers/MapManager.lua
 
 Dev/MapMaker.lua
