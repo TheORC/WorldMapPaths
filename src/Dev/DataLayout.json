@@ -1,5 +1,17 @@
 {
   "zoneId": "1234",
+  "neighbours": [
+    {
+      "nodeId": 12345,
+      "targetId": 321654,
+      "zoneId": 123
+    },
+    {
+      "nodeId": 654987,
+      "targetId": 96325,
+      "zoneId": 1000
+    }
+  ],
   "nodes": [
     {
       "id": "12346",
