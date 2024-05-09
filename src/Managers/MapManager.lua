@@ -99,6 +99,7 @@ function WMP_Map_Manager:DrawPath(target)
     return;
   end
 
+  local zoneId = self:GetPlayerZoneId()
   local startPos = self:GetPlayerPosition()
   local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
@@ -109,7 +110,7 @@ function WMP_Map_Manager:DrawPath(target)
     return
   end
 
-  local path = WMP_ZonePath:New(pathStart, pathEnd)
+  local path = WMP_ZonePath:New(zoneId, pathStart, pathEnd)
 
   self.renderer:SetPath(path)
   self.renderer:Draw()
@@ -137,6 +138,14 @@ function WMP_Map_Manager:GetMap()
 end
 
 do
+  ---Calculates a path between zones based on their provided id.
+  ---@param startId integer
+  ---@param endId integer
+  ---@return WMP_Path
+  function WMP_Map_Manager:CalculateZonePath(startId, endId)
+    return nil
+  end
+
   ---Load the zone with the specified id.
   ---@param zoneId integer
   function WMP_Map_Manager:LoadZone(zoneId)
@@ -180,6 +189,13 @@ do
   ---@return WMP_Vector
   function WMP_Map_Manager:GetPlayerPosition()
     return WMP_Vector:New(GetMapPlayerPosition("player"))
+  end
+
+  ---Gets the zone data for the given id
+  ---@param zoneId integer
+  ---@return WMP_Map|nil
+  function WMP_Map_Manager:GetZone(zoneId)
+    return WMP_STORAGE:GetMap(zoneId)
   end
 end
 

@@ -17,10 +17,11 @@ utils/Renderers/PathRenderer.lua
 
 UI/Line.lua
 UI/Path.lua
+UI/ShortestPath.lua
 UI/ZonePath.lua
 UI/Controls.xml
 
-Managers/Storage.lua
+Managers/Storage.luam
 Managers/MapManager.lua
 
 Dev/MapMaker.lua

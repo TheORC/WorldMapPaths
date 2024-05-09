@@ -1,32 +1,22 @@
----@class WMP_ZonePath : WMP_Path
-WMP_ZonePath = WMP_Path:Subclass()
+---@class WMP_ZonePath : WMP_ShortestPath
+WMP_ZonePath = WMP_ShortestPath:Subclass()
 
-function WMP_ZonePath:Initialize(startNode, endNode)
-  WMP_Path.Initialize(self)
-
+---Creates a new zone path object
+---@param zoneId integer
+---@param startNode WMP_Node
+---@param endNode WMP_Node
+function WMP_ZonePath:Initialize(zoneId, startNode, endNode)
+  assert(zoneId ~= nil, "The zone id can not be nil")
   assert(startNode ~= nil, "The start node can not be nil")
   assert(endNode ~= nil, "The end node can not be nil")
 
-  self.startNode = startNode
-  self.endNode = endNode
+  self.zoneId = zoneId
 
-  self:CalculateShortestPath()
+  WMP_ShortestPath.Initialize(self, startNode, endNode)
 end
 
----Calculates the shortest path between the start and end nodes
-function WMP_ZonePath:CalculateShortestPath()
-  local shortestPath = WMP_Calculate(self.startNode, self.endNode)
-
-  -- We don't have a valid path
-  if not shortestPath or #shortestPath <= 1 then
-    self.pathLines = {}
-    return
-  end
-
-  for i = 2, #shortestPath do
-    local lineEnd = shortestPath[i - 1]
-    local lineStart = shortestPath[i]
-
-    self:AddLine(WMP_Line:New(lineStart:GetLocalPosition(), lineEnd:GetLocalPosition()))
-  end
+---Returns the zone id for the zone path
+---@return integer
+function WMP_ZonePath:GetZoneId()
+  return self.zoneId
 end
