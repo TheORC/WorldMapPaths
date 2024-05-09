@@ -51,6 +51,14 @@ end
 ---@param isPingOwner boolean
 function WMP_Map_Manager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
   self.player_target = WMP_Vector:New(GPS:LocalToGlobal(x, y))
+  local lX, lY = self.player_target.x, self.player_target.y
+
+  if self:GetPlayerZoneId() == self:GetZoneIdFromPosition(lX, lY) then
+    d('In the same zone')
+  else
+    d('in multiple zones!')
+  end
+
   self:DrawPath(self.player_target)
 end
 
@@ -191,10 +199,25 @@ do
     return WMP_Vector:New(GetMapPlayerPosition("player"))
   end
 
+  ---Get's the zone id at the provided position.
+  ---@param x number
+  ---@param y number
+  ---@return integer
+  function WMP_Map_Manager:GetZoneIdFromPosition(x, y)
+    GPS:PushCurrentMap()
+    GPS:SetMapToRootMap(x, y)
+    GPS:MapZoomInMax(x, y)
+
+    local zoneId = self:GetCurrentZoneId()
+    GPS:PopCurrentMap()
+
+    return zoneId
+  end
+
   ---Gets the zone data for the given id
   ---@param zoneId integer
   ---@return WMP_Map|nil
-  function WMP_Map_Manager:GetZone(zoneId)
+  function WMP_Map_Manager:GetZoneMap(zoneId)
     return WMP_STORAGE:GetMap(zoneId)
   end
 end
