@@ -64,7 +64,7 @@ end
 
 ---Loads a map from storage
 ---@param zoneId integer
----@return WMP_Map|nil
+---@return WMP_MAP|nil
 function WMP_Storage:GetMap(zoneId)
     local index = self:FindMapIndex(zoneId)
 

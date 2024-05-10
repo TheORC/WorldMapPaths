@@ -1,6 +1,6 @@
 ---
 --- @author: AnotherORC
----
+--- GPS (But TPS)
 
 local WMP = {}
 local IS_DEBUG = true
@@ -46,6 +46,7 @@ local function OnAddonLoad(_, name)
     -- Load our storage
     WMP_STORAGE:LoadData()
     WMP_MAP_MANAGER:LateInitialize()
+    WMP_WORLD_MAKER:LoadWorldMap()
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)

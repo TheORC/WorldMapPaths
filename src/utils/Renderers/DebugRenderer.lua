@@ -102,6 +102,7 @@ do
         callback = function(pin)
           local _, pinData = pin:GetPinTypeAndTag()
           WMP_DebugUI_SetCopytext(pinData.node_id)
+          WMP_WorldUI_SetCopytext(pinData.node_id)
         end
       }
     }, nil)

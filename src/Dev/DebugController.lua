@@ -7,15 +7,17 @@ function WMP_DebugController:Initialize(control)
   self.mapController = WMP_DebugMap_UI
   self.worldController = WMP_WorldMap_UI
 
-  self.isWorldActive = false
+  self.isWorldActive = true
   self.isDebug = true
 
-  if not self.isDebug then
-    self:DisableDebug()
-  elseif self.isWorldActive then
-    self:ShowWorldMenu()
+
+  self.mapController:SetHidden(true)
+  self.worldController:SetHidden(true)
+
+  if self.isDebug then
+    self:EnableDebug()
   else
-    self:ShowMapMenu()
+    self:DisableDebug()
   end
 end
 
@@ -26,6 +28,7 @@ function WMP_DebugController:EnableDebug()
   else
     self.mapController:SetHidden(false)
   end
+
   self.control:SetHidden(false)
   self.isDebug = true
 end
@@ -64,6 +67,14 @@ end
 ---@return boolean
 function WMP_DebugController:IsDebug()
   return self.isDebug
+end
+
+function WMP_DebugController:GetActiveMap()
+  if self.isWorldActive then
+    return WMP_WORLD_MAKER:GetMap()
+  else
+    return WMP_MAP_MAKER:GetMap()
+  end
 end
 
 ---Initialize the debug controller

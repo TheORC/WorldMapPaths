@@ -27,7 +27,7 @@
             <Button name="$(parent)Add" inherits="WMP_LabelButton">
               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
               <Dimensions x="120"/>
-              <OnClicked>WMP_DebugUI_Add()</OnClicked>
+              <OnClicked>WMP_WorldUI_AddNode(self)</OnClicked>
               <OnInitialized>WMP_LabelButton_OnInitialized(self, "Add")</OnInitialized>
             </Button>
 
@@ -42,7 +42,7 @@
             <Button name="$(parent)Remove" inherits="WMP_LabelButton">
               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
               <Dimensions x="120"/>
-              <OnClicked>WMP_DebugUI_Remove()</OnClicked>
+              <OnClicked>WMP_WorldUI_RemoveNode(self)</OnClicked>
               <OnInitialized>WMP_LabelButton_OnInitialized(self, "Remove")</OnInitialized>
             </Button>
 
@@ -62,7 +62,7 @@
             <Button name="$(parent)Connect" inherits="WMP_LabelButton">
               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
               <Dimensions x="120"/>
-              <OnClicked>WMP_DebugUI_Connect()</OnClicked>
+              <OnClicked>WMP_WorldUI_AddConnection(self)</OnClicked>
               <OnInitialized>WMP_LabelButton_OnInitialized(self, "Connect")</OnInitialized>
             </Button>
 
@@ -90,7 +90,7 @@
               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
               <Dimensions x="120"/>
               <OnInitialized>WMP_LabelButton_OnInitialized(self, "Disconnect")</OnInitialized>
-              <OnClicked>WMP_DebugUI_Disconnect()</OnClicked>
+              <OnClicked>WMP_WorldUI_RemoveConnection(self)</OnClicked>
             </Button>
 
             <Backdrop name="$(parent)Node1" inherits="WMP_EditBackdrop">
@@ -116,13 +116,13 @@
             <Button name="$(parent)ShowPoints" inherits="WMP_LabelCheck" clickSound="Click">
               <Anchor point="LEFT" relativePoint="LEFT" />
               <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Points")</OnInitialized>
-              <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
+              <OnClicked>WMP_WorldUI_ShowPath(self)</OnClicked>
             </Button>
 
             <Button name="$(parent)ShowPath" inherits="WMP_LabelCheck" clickSound="Click">
               <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)ShowPointsLabel" offsetX="10"/>
               <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Path")</OnInitialized>
-              <OnClicked>WMP_DebugUI_Setting_ShowPath(self)</OnClicked>
+              <OnClicked>WMP_WorldUI_ShowNodes(self)</OnClicked>
             </Button>
 
           </Controls>
@@ -144,14 +144,7 @@
           <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" offsetX="20" offsetY="-15" />
           <Dimensions x="120"/>
           <OnInitialized>WMP_LabelButton_OnInitialized(self, "Save")</OnInitialized>
-          <OnClicked>WMP_DebugUI_Save()</OnClicked>
-        </Button>
-
-        <Button name="$(parent)Load" inherits="WMP_LabelButton">
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" offsetX="-20" offsetY="-15"/>
-          <Dimensions x="120"/>
-          <OnInitialized>WMP_LabelButton_OnInitialized(self, "Load")</OnInitialized>
-          <OnClicked>WMP_DebugUI_Load()</OnClicked>
+          <OnClicked>WMP_WorldUI_Save(self)</OnClicked>
         </Button>
 
       </Controls>

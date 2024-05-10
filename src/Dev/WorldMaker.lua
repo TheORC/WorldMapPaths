@@ -1,16 +1,16 @@
 ---Helper class for creating the world map.
----@class WMP_ZoneMaker
----@field private world WMP_World|nil -- The world map
-local WMP_ZoneMaker = ZO_InitializingObject:Subclass()
+---@class WMP_WorldMaker
+---@field private world WMP_World -- The world map
+local WMP_WorldMaker = ZO_InitializingObject:Subclass()
 
 ---Create a new world maker object
-function WMP_ZoneMaker:Initialize()
+function WMP_WorldMaker:Initialize()
   self.world = nil
 end
 
 ---Adds a new node to the world map
-function WMP_ZoneMaker:AddNode()
-  if not self.worldMap then
+function WMP_WorldMaker:AddNode()
+  if not self.world then
     d('There is no world map.')
     return
   end
@@ -19,12 +19,14 @@ function WMP_ZoneMaker:AddNode()
   local playerPos = WMP_GetPlayerGlobalPos()
   local _, node = self.world:CreateNode(playerZoneId, playerPos)
   d(zo_strformat('Added a new node (<<1>>)', node:toString()))
+
+  self:OnUpdate()
 end
 
 ---Removes a node from the world map
 ---@param nodeId integer
-function WMP_ZoneMaker:RemoveNode(nodeId)
-  if not self.worldMap then
+function WMP_WorldMaker:RemoveNode(nodeId)
+  if not self.world then
     d('There is no world map.')
     return
   end
@@ -37,37 +39,70 @@ function WMP_ZoneMaker:RemoveNode(nodeId)
   end
 
   self.world:RemoveNode(nodeId)
+
+  self:OnUpdate()
 end
 
 ---Add a connection between two nodes
 ---@param nodeA integer
 ---@param nodeB integer
-function WMP_ZoneMaker:AddConnection(nodeA, nodeB)
-  if not self.worldMap then
+function WMP_WorldMaker:AddConnection(nodeA, nodeB)
+  if not self.world then
     d('There is no world map.')
     return
   end
 
   self.world:AddConnection(nodeA, nodeB)
   d(zo_strformat('Added connection between <<1>> and <<2>>', nodeA, nodeB))
+
+  self:OnUpdate()
 end
 
 ---Remove a connection between two nodes
 ---@param nodeA integer
 ---@param nodeB integer
-function WMP_ZoneMaker:RemoveConnection(nodeA, nodeB)
-  if not self.worldMap then
+function WMP_WorldMaker:RemoveConnection(nodeA, nodeB)
+  if not self.world then
     d('There is no world map.')
     return
   end
 
   self.world:RemoveConnection(nodeA, nodeB)
   d(zo_strformat('Removed connection between <<1>> and <<2>>', nodeA, nodeB))
+
+  self:OnUpdate()
 end
 
-function WMP_ZoneMaker:GetMap()
-  if not self.worldMap then
-    self.worldMap = WMP_STORAGE:GetMap(0)
+---Loads the world map from storage
+function WMP_WorldMaker:LoadWorldMap()
+  local map = self:GetMap()
+
+  if not map then
+    map = WMP_World:New()
   end
-  return self.worldMap
+
+  self.world = map
 end
+
+---Gets the world map
+---@return WMP_World|nil
+function WMP_WorldMaker:GetMap()
+  if not self.world then
+    self.world = WMP_STORAGE:GetMap(0)
+  end
+  return self.world
+end
+
+---Saves the world map
+function WMP_WorldMaker:Save()
+  WMP_STORAGE:StoreMap(self.world)
+end
+
+do
+  function WMP_WorldMaker:OnUpdate()
+    WMP_DEBUG_RENDERER:Draw()
+  end
+end
+
+---@type WMP_WorldMaker
+WMP_WORLD_MAKER = WMP_WorldMaker:New()

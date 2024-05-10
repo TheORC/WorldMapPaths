@@ -140,7 +140,7 @@ end
 ---@return WMP_Zone
 function WMP_Map_Manager:GetMap()
   if WMP_DEBUG_CONTROLLER:IsDebug() then
-    return WMP_MAP_MAKER:GetMap()
+    return WMP_DEBUG_CONTROLLER:GetActiveMap()
   else
     return self.map
   end
