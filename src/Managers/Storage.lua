@@ -44,7 +44,16 @@ end
 ---@param map WMP_Map
 function WMP_Storage:StoreMap(map)
     local index = self:FindMapIndex(map:GetZoneId())
-    local mapData = WMP_Map.MapToStorage(map)
+    local mapData = nil
+
+    if getmetatable(map) == WMP_Zone then
+        mapData = WMP_Zone:MapToStorage(map)
+    elseif getmetatable(map) == WMP_World then
+        mapData = WMP_World:MapToStorage(map)
+    else
+        d("Unable to save the map. Unknonw type!")
+        return
+    end
 
     if index ~= nil then
         self.storage[MAP_KEY][index] = mapData
@@ -64,7 +73,12 @@ function WMP_Storage:GetMap(zoneId)
     end
 
     local mapData = self.storage[MAP_KEY][index]
-    return WMP_Map.StorageToMap(mapData)
+
+    if zoneId == 0 then
+        return WMP_World:StorageToMap(mapData)
+    else
+        return WMP_Zone:StorageToMap(mapData)
+    end
 end
 
 do

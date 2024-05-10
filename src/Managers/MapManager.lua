@@ -137,7 +137,7 @@ function WMP_Map_Manager:UpdateDebugState()
 end
 
 ---Returns the current map
----@return WMP_Map
+---@return WMP_Zone
 function WMP_Map_Manager:GetMap()
   if WMP_DEBUG_CONTROLLER:IsDebug() then
     return WMP_MAP_MAKER:GetMap()

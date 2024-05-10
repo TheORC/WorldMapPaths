@@ -9,3 +9,7 @@ function WMP_ZoneNode:Initialize(zoneId, id, position)
   WMP_Node.Initialize(self, id, position)
   self.zoneId = zoneId
 end
+
+function WMP_ZoneNode:GetZoneId()
+  return self.zoneId
+end

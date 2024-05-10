@@ -23,6 +23,7 @@
           <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="50"/>
           <Dimensions x="300" y="20"/>
           <Controls>
+
             <Button name="$(parent)Add" inherits="WMP_LabelButton">
               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
               <Dimensions x="120"/>
@@ -30,10 +31,6 @@
               <OnInitialized>WMP_LabelButton_OnInitialized(self, "Add")</OnInitialized>
             </Button>
 
-            <Button name="$(parent)ConnectLast" inherits="WMP_LabelCheck">
-              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Add" />
-              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Add")</OnInitialized>
-            </Button>
           </Controls>
         </Control>
 

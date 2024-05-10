@@ -8,18 +8,19 @@
 ## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS>=30 LibMapPing
 
 utils/AStar.lua
+utils/Vector.lua
 utils/PlayerUtils.lua
-utils/Structures/Vector.lua
-utils/Structures/Node.lua
-utils/Structures/PathBuilder.lua
+utils/Nodes/Node.lua
+utils/Nodes/ZoneNode.lua
+utils/Paths/PathBuilder.lua
+utils/Maps/Map.lua
+utils/Maps/Zone.lua
+utils/Maps/World.lua
 utils/Renderers/Renderer.lua
 utils/Renderers/DebugRenderer.lua
 utils/Renderers/PathRenderer.lua
 
-utils/Map.lua
-utils/World.lua
-
-UI/Line.lua
+UI/Line.lua 
 UI/Path.lua
 UI/ShortestPath.lua
 UI/ZonePath.lua
@@ -30,6 +31,7 @@ Managers/Storage.lua
 Managers/MapManager.lua
 
 Dev/MapMaker.lua
+Dev/WorldMaker.lua
 Dev/MapUI.lua
 Dev/MapUI.xml
 Dev/WorldUI.lua

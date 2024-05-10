@@ -29,7 +29,7 @@ end
 
 ---Helper class for creating map path nodes.
 ---@class WMP_Map_Maker
----@field private map WMP_Map -- The current map being worked on
+---@field private map WMP_Zone -- The current map being worked on
 ---@field private previousNode integer -- The previous placed node.
 local WMP_Map_Maker = ZO_InitializingObject:Subclass()
 
@@ -55,7 +55,7 @@ function WMP_Map_Maker:Start()
   else
     d('Map maker running for zone: ' .. getPlayerZone())
     ---@diagnostic disable-next-line: undefined-field
-    self.map = WMP_Map:New(getPlayerZone())
+    self.map = WMP_Zone:New(getPlayerZone())
   end
 end
 
@@ -181,7 +181,7 @@ function WMP_Map_Maker:Load()
 end
 
 ---Returns the map.
----@return WMP_Map|nil
+---@return WMP_Zone|nil
 function WMP_Map_Maker:GetMap()
   return self.map
 end

@@ -23,7 +23,7 @@ function WMP_Debug_Menu:Initialize(control)
   self.m_disconnectAEdit = control:GetNamedChild("DisconnectRegionNode1Edit")
   self.m_disconnectBEdit = control:GetNamedChild("DisconnectRegionNode2Edit")
 
-  self.m_saveButtonText = control:GetNamedChild("SaveText")
+  self.m_saveButtonText = control:GetNamedChild("SaveLabel")
 end
 
 ---Set the contents of the copy edit field

@@ -2,7 +2,7 @@ local GPS = LibGPS3
 
 ---Returns the zone id the player is currently in
 ---@return integer
-function WMP_GetPlayerZone()
+function WMP_GetPlayerZoneId()
   local zoneId, _, _, _ = GetUnitWorldPosition("player")
   ---@diagnostic disable-next-line: return-type-mismatch
   return zoneId
@@ -12,7 +12,7 @@ end
 ---@param zoneId integer
 ---@return boolean
 function WMP_IsPlayerInZone(zoneId)
-  return zoneId == WMP_GetPlayerZone()
+  return zoneId == WMP_GetPlayerZoneId()
 end
 
 ---Returns the player current local position

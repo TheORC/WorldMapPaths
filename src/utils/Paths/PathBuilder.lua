@@ -169,7 +169,7 @@ end
 
 ---Converts a stored object into a path
 ---@param mapData table
----@return WMP_Map
+---@return any
 function WMP_PathBuilder.FromStorage(mapData)
   assert(false, "From storage needs to be extended")
   return {}

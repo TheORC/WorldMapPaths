@@ -1,25 +1,17 @@
 ---Class representation of a map.
----@class WMP_Map : WMP_PathBuilder
-WMP_Map = WMP_PathBuilder:Subclass()
+---@class WMP_Zone : WMP_Map
+WMP_Zone = WMP_Map:Subclass()
 
 ---Creates a new map data structure
 ---@param zoneId integer
-function WMP_Map:Initialize(zoneId)
-  WMP_PathBuilder.Initialize(self)
-
-  self.zoneId = zoneId
+function WMP_Zone:Initialize(zoneId)
+  WMP_Map.Initialize(self, zoneId)
 end
 
----Retunrs the map's zone id
----@return integer
-function WMP_Map:GetZoneId()
-  return self.zoneId
-end
-
----Format a map so it can saved to storage
----@param map WMP_Map
+---Format a zone map so it can saved to storage
+---@param map WMP_Zone
 ---@return table
-function WMP_Map.MapToStorage(map)
+function WMP_Zone:MapToStorage(map)
   local storage = {}
   storage["zoneId"] = map:GetZoneId()
   storage["nodes"] = {}
@@ -44,16 +36,16 @@ end
 
 ---Creates a map from stored map data
 ---@param mapData table
----@return WMP_Map
-function WMP_Map.StorageToMap(mapData)
+---@return WMP_Zone
+function WMP_Zone:StorageToMap(mapData)
   local zoneId = mapData["zoneId"]
   local nodes = mapData["nodes"]
 
   local allConnections = {}
 
-  ---@type WMP_Map
+  ---@type WMP_Zone
   ---@diagnostic disable-next-line: undefined-field
-  local newMap = WMP_Map:New(zoneId)
+  local newMap = WMP_Zone:New(zoneId)
 
   -- Load all nodes from storage
   for _, node in ipairs(nodes) do

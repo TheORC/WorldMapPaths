@@ -1,3 +1,6 @@
+local BUTTON_COLOR = 'ffffff'
+local LABEL_COLOR = 'a5afb1'
+
 ---Initiates focus edit box
 ---@param self any
 ---@param defaultText string
@@ -19,7 +22,7 @@ function WMP_LabelButton_OnInitialized(self, labelText)
   end
 
   local label = self:GetNamedChild("Label")
-  label:SetText(zo_strformat("|cFFAA33<<1>>|r", labelText))
+  label:SetText(zo_strformat("|c<<1>><<2>>|r", BUTTON_COLOR, labelText))
 end
 
 ---Initiates a checkbox with a label
@@ -34,5 +37,5 @@ function WMP_LabelCheck_OnInitialized(self, state, labelText)
   end
 
   local label = self:GetNamedChild("Label")
-  label:SetText(zo_strformat("|cFFAA33<<1>>|r", labelText))
+  label:SetText(zo_strformat("|c<<1>><<2>>|r", BUTTON_COLOR, labelText))
 end

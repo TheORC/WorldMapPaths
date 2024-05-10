@@ -3,13 +3,20 @@ local WMP_DebugController = ZO_InitializingObject:Subclass()
 
 function WMP_DebugController:Initialize(control)
   self.control = control
+
   self.mapController = WMP_DebugMap_UI
   self.worldController = WMP_WorldMap_UI
 
   self.isWorldActive = false
-  self.isDebug = false
+  self.isDebug = true
 
-  self:DisableDebug()
+  if not self.isDebug then
+    self:DisableDebug()
+  elseif self.isWorldActive then
+    self:ShowWorldMenu()
+  else
+    self:ShowMapMenu()
+  end
 end
 
 ---Enable and show the debug menus
@@ -64,4 +71,12 @@ end
 function WMP_DebugController_OnInitialized(self)
   ---@type WMP_DebugController
   WMP_DEBUG_CONTROLLER = WMP_DebugController:New(self)
+end
+
+function WMP_DebugController_ShowWorld()
+  WMP_DEBUG_CONTROLLER:ShowWorldMenu()
+end
+
+function WMP_DebugController_ShowMap()
+  WMP_DEBUG_CONTROLLER:ShowMapMenu()
 end

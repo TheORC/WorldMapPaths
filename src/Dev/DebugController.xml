@@ -1,7 +1,7 @@
 <GuiXml>
   <Controls>
     <TopLevelControl name="WMP_DebugController_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
-      <Dimensions x="300" y="430"/>
+      <Dimensions x="180" y="140"/>
       <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-300" offsetY="50" />
       <OnInitialized>WMP_DebugController_OnInitialized(self)</OnInitialized>
       <Controls>
@@ -15,6 +15,20 @@
           <Anchor point="TOP" relativePoint="TOP" relativeTo="$(parent)" offsetY="10"/>
           <OnInitialized>self:SetText("|cFFAA33WMP Debug Menu|r");self:SetFont("ZoFontGameLargeBold");</OnInitialized>
         </Label>
+
+        <Button name="$(parent)EnableWorld" inherits="WMP_LabelButton">
+          <Anchor point="TOP" relativePoint="TOP" offsetY="50" />
+          <Dimensions x="120"/>
+          <OnClicked>WMP_DebugController_ShowWorld()</OnClicked>
+          <OnInitialized>WMP_LabelButton_OnInitialized(self, "Enable World")</OnInitialized>
+        </Button>
+
+        <Button name="$(parent)EnableMap" inherits="WMP_LabelButton">
+          <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$(parent)EnableWorld" offsetY="10" />
+          <Dimensions x="120"/>
+          <OnClicked>WMP_DebugController_ShowMap()</OnClicked>
+          <OnInitialized>WMP_LabelButton_OnInitialized(self, "Enable Map")</OnInitialized>
+        </Button>
 
       </Controls>
     </TopLevelControl>
