@@ -8,6 +8,7 @@
 ## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS>=30 LibMapPing
 
 utils/AStar.lua
+utils/PlayerUtils.lua
 utils/Structures/Vector.lua
 utils/Structures/Node.lua
 utils/Structures/PathBuilder.lua
