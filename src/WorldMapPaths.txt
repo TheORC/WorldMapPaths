@@ -10,10 +10,13 @@
 utils/AStar.lua
 utils/Structures/Vector.lua
 utils/Structures/Node.lua
-utils/Structures/Map.lua
+utils/Structures/PathBuilder.lua
 utils/Renderers/Renderer.lua
 utils/Renderers/DebugRenderer.lua
 utils/Renderers/PathRenderer.lua
+
+utils/Map.lua
+utils/World.lua
 
 UI/Line.lua
 UI/Path.lua

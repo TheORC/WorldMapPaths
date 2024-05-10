@@ -111,8 +111,8 @@ function WMP_Map_Manager:DrawPath(target)
   local startPos = self:GetPlayerPosition()
   local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
-  local pathStart = self:GetMap():GetClosesNode(startPos)
-  local pathEnd = self:GetMap():GetClosesNode(endPos)
+  local pathStart = self:GetMap():GetClosestNode(startPos)
+  local pathEnd = self:GetMap():GetClosestNode(endPos)
 
   if not pathStart or not pathEnd then
     return
