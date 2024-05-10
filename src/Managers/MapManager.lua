@@ -16,11 +16,9 @@ local GPS = LibGPS3
 local WMP_Map_Manager = ZO_InitializingObject:Subclass()
 
 function WMP_Map_Manager:Initialize()
-  self.renderer = WMP_Path_Render:New() -- WMP_DEBUG_RENDERER -- WMP_Path_Render:New()
-  self.is_debug = false                 -- TODO: make this changeable
-
   self.map = nil
   self.player_target = nil
+  self.renderer = WMP_PATH_RENDERER -- WMP_DEBUG_RENDERER -- WMP_PATH_RENDERER
 end
 
 function WMP_Map_Manager:LateInitialize()
@@ -89,7 +87,7 @@ function WMP_Map_Manager:OnMapChanged()
   self:LoadZone(self:GetCurrentZoneId())
 
   -- We have a target draw it
-  if self.player_target or self.is_debug then
+  if self.player_target or WMP_DEBUG_CONTROLLER:IsDebug() then
     self:DrawPath(self.player_target)
   end
 end
@@ -98,7 +96,7 @@ end
 ---@param target WMP_Vector
 function WMP_Map_Manager:DrawPath(target)
   -- The render handles most of this logic itself.
-  if self.is_debug then
+  if WMP_DEBUG_CONTROLLER:IsDebug() then
     self.renderer:Draw()
     return
   end
@@ -125,20 +123,23 @@ function WMP_Map_Manager:DrawPath(target)
 end
 
 ---Toggle the renderer between the debug render and path renderer
-function WMP_Map_Manager:ToggleDebug()
-  self.is_debug = not self.is_debug
+function WMP_Map_Manager:UpdateDebugState()
+  -- Clear the existing renderer
+  if self.renderer then
+    self.renderer:Clear()
+  end
 
-  if self.is_debug then
+  if WMP_DEBUG_CONTROLLER:IsDebug() then
     self.renderer = WMP_DEBUG_RENDERER
   else
-    self.renderer = WMP_Path_Render:New()
+    self.renderer = WMP_PATH_RENDERER
   end
 end
 
 ---Returns the current map
 ---@return WMP_Map
 function WMP_Map_Manager:GetMap()
-  if self.is_debug then
+  if WMP_DEBUG_CONTROLLER:IsDebug() then
     return WMP_MAP_MAKER:GetMap()
   else
     return self.map
@@ -158,7 +159,7 @@ do
   ---@param zoneId integer
   function WMP_Map_Manager:LoadZone(zoneId)
     -- Not responsible for the map in debug
-    if self.is_debug then
+    if WMP_DEBUG_CONTROLLER:IsDebug() then
       return
     end
 

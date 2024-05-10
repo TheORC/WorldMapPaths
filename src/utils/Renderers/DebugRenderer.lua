@@ -9,7 +9,7 @@ local WMP_Debug_Render = WMP_Renderer:Subclass()
 
 ---Initializes a new renderer
 function WMP_Debug_Render:Initialize()
-  WMP_Renderer.Initialize(self)
+  WMP_Renderer.Initialize(self, 'Debug')
 
   self:CreatePinType()
 end

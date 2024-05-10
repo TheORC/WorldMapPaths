@@ -1,9 +1,9 @@
 ---Class for creating a path renderer
 ---@class WMP_Path_Render : WMP_Renderer
-WMP_Path_Render = WMP_Renderer:Subclass()
+local WMP_Path_Render = WMP_Renderer:Subclass()
 
 function WMP_Path_Render:Initialize()
-  WMP_Renderer.Initialize(self)
+  WMP_Renderer.Initialize(self, 'Path')
 end
 
 ---Method for drawing the provided path on the current map
@@ -44,3 +44,6 @@ do
     end
   end
 end
+
+---@type WMP_Path_Render
+WMP_PATH_RENDERER = WMP_Path_Render:New()

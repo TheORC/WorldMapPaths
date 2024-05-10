@@ -75,6 +75,8 @@ local function OnAddonLoad(_, name)
                 WMP_DEBUG_CONTROLLER:EnableDebug()
             end
 
+            -- Make sure the map manager understands what is happening
+            WMP_MAP_MANAGER:UpdateDebugState()
             return
         end
 

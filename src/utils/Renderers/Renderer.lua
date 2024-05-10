@@ -2,9 +2,11 @@
 ---@class WMP_Renderer
 WMP_Renderer = ZO_InitializingObject:Subclass()
 
-function WMP_Renderer:Initialize()
+---Create a new render of type
+---@param type string
+function WMP_Renderer:Initialize(type)
   self.path = nil
-  self.linkPool = ZO_ControlPool:New("WMPLink", ZO_WorldMapContainer, 'Link')
+  self.linkPool = ZO_ControlPool:New("WMPLink", ZO_WorldMapContainer, type)
   HandleMapZoom(self)
 end
 
