@@ -22,6 +22,7 @@ UI/Line.lua
 UI/Path.lua
 UI/ShortestPath.lua
 UI/ZonePath.lua
+UI/Controls.lua
 UI/Controls.xml
 
 Managers/Storage.lua

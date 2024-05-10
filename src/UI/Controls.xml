@@ -1,5 +1,36 @@
 <GuiXml>
 	<Controls>
 		<Line name="WMPLink" thickness="8" virtual="true"/>
+
+		<Button name="WMP_LabelButton" inherits="ZO_DefaultButton" virtual="true">
+			<Dimensions x="300" y="20"/>
+			<OnInitialized>WMP_LabelButton_OnInitialized(self, "Label")</OnInitialized>
+			<Controls>
+				<Label name="$(parent)Label" font="WMP_Font" color="FFFFFF">
+					<Anchor point="CENTER" relativePoint="CENTER" />
+				</Label>
+			</Controls>
+		</Button>
+
+		<Button name="WMP_LabelCheck" inherits="ZO_CheckButton" clickSound="Click" virtual="true">
+			<OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Label")</OnInitialized>
+			<Controls>
+				<Label name="$(parent)Label" font="ZoFontGame" color="f0f8ff">
+					<Anchor point="LEFT" relativePoint="LEFT" offsetX="25"/>
+				</Label>
+			</Controls>
+		</Button>
+
+		<EditBox name="WMP_FocusEditBox" inherits="ZO_DefaultEditForBackdrop" virtual="true">
+			<OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
+		</EditBox>
+
+		<Backdrop name="WMP_EditBackdrop" inherits="ZO_SingleLineEditBackdrop_Keyboard" virtual="true">
+			<OnInitialized>WMP_EditBackdrop_OnInitialized(self, "Edit box")</OnInitialized>
+			<Controls>
+				<EditBox name="$(parent)Edit" inherits="WMP_FocusEditBox" />
+			</Controls>
+		</Backdrop>
+
 	</Controls>
 </GuiXml>
