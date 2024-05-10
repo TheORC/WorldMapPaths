@@ -1,0 +1,22 @@
+<GuiXml>
+  <Controls>
+    <TopLevelControl name="WMP_DebugController_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
+      <Dimensions x="300" y="430"/>
+      <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-300" offsetY="50" />
+      <OnInitialized>WMP_DebugController_OnInitialized(self)</OnInitialized>
+      <Controls>
+
+        <Backdrop name="$(parent)_BG" centerColor="000000" edgeColor="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" pixelRoundingEnabled="true">
+          <AnchorFill/>
+          <Edge edgeSize="1"/>
+        </Backdrop>
+
+        <Label name="$(parent)Headline" color="FFFFFF">
+          <Anchor point="TOP" relativePoint="TOP" relativeTo="$(parent)" offsetY="10"/>
+          <OnInitialized>self:SetText("|cFFAA33WMP Debug Menu|r");self:SetFont("ZoFontGameLargeBold");</OnInitialized>
+        </Label>
+
+      </Controls>
+    </TopLevelControl>
+  </Controls>
+</GuiXml>

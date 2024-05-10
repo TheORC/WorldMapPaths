@@ -15,7 +15,7 @@
 
         <Label name="$(parent)Headline" color="FFFFFF">
           <Anchor point="TOP" relativePoint="TOP" relativeTo="$(parent)" offsetY="10"/>
-          <OnInitialized>self:SetText("|cFFAA33WMP World Menu|r");self:SetFont("ZoFontGameLargeBold");</OnInitialized>
+          <OnInitialized>self:SetText("|cFFAA33WMP World|r");self:SetFont("ZoFontGameLargeBold");</OnInitialized>
         </Label>
 
         <!-- Add Button -->

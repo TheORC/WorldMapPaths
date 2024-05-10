@@ -51,6 +51,7 @@ local function OnAddonLoad(_, name)
         local options = parseCommandArgs(args)
 
         if #options == 0 or options[1] == 'help' then
+            d('/wmp debug - toggle debug mode')
             d('/wmp start - starts the map maker')
             d('/wmp reset - resets the map maker')
             d('/wmp add - adds a new node to the map and connect to previous.')
@@ -66,6 +67,21 @@ local function OnAddonLoad(_, name)
         end
 
         local command = options[1]
+
+        if command == 'debug' then
+            if WMP_DEBUG_CONTROLLER:IsDebug() then
+                WMP_DEBUG_CONTROLLER:DisableDebug()
+            else
+                WMP_DEBUG_CONTROLLER:EnableDebug()
+            end
+
+            return
+        end
+
+        if not WMP_DEBUG_CONTROLLER:IsDebug() then
+            d("Commands only active during debug mode")
+            return
+        end
 
         if command == 'start' then
             WMP_MAP_MAKER:Start()

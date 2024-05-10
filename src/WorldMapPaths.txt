@@ -33,7 +33,8 @@ Dev/MapUI.lua
 Dev/MapUI.xml
 Dev/WorldUI.lua
 Dev/WorldUI.xml
-Dev/TestUI.lua
+Dev/DebugController.lua
+Dev/DebugController.xml
 
 WMP.lua
 bindings.xml
