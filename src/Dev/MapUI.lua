@@ -92,7 +92,7 @@ end
 ---Get the Debug UI menu
 ---@return WMP_Debug_Menu
 function WMP_GetDebugMenu()
-  return GetControl("WMP_Debug_UI", "").m_object
+  return WMP_DebugMap_UI.m_object
 end
 
 ---Method called when the DebugUI is initialized
@@ -155,7 +155,7 @@ end
 ---Method called to connect to nodes on the map
 function WMP_DebugUI_Save()
   WMP_MAP_MAKER:Save()
-  WMP_Debug_UI.m_object:OnMapSave()
+  WMP_DebugMap_UI.m_object:OnMapSave()
 end
 
 ---Method called to connect to nodes on the map

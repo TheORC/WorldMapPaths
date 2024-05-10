@@ -29,9 +29,9 @@ Managers/Storage.lua
 Managers/MapManager.lua
 
 Dev/MapMaker.lua
-Dev/DebugUI.lua
+Dev/MapUI.lua
+Dev/MapUI.xml
 Dev/TestUI.lua
-Dev/DebugUI.xml
 Dev/TestUI.xml
 Dev/Test.lua
 

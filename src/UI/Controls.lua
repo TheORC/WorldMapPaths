@@ -19,7 +19,7 @@ function WMP_LabelButton_OnInitialized(self, labelText)
   end
 
   local label = self:GetNamedChild("Label")
-  label:SetText(zo_strformat("|cFFAA33<<1>>|r"), labelText)
+  label:SetText(zo_strformat("|cFFAA33<<1>>|r", labelText))
 end
 
 ---Initiates a checkbox with a label
@@ -34,5 +34,5 @@ function WMP_LabelCheck_OnInitialized(self, state, labelText)
   end
 
   local label = self:GetNamedChild("Label")
-  label:SetText(zo_strformat("|cFFAA33<<1>>|r"), labelText)
+  label:SetText(zo_strformat("|cFFAA33<<1>>|r", labelText))
 end

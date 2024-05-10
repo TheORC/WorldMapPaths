@@ -1,9 +1,12 @@
 <GuiXml>
+
+	<Font name="WMP_Font" font="$(MEDIUM_FONT)|18"/>
+	<Font name="WMP_Default" font="ZoFontGame" color="f0f8ff"/>
+
 	<Controls>
 		<Line name="WMPLink" thickness="8" virtual="true"/>
 
 		<Button name="WMP_LabelButton" inherits="ZO_DefaultButton" virtual="true">
-			<Dimensions x="300" y="20"/>
 			<OnInitialized>WMP_LabelButton_OnInitialized(self, "Label")</OnInitialized>
 			<Controls>
 				<Label name="$(parent)Label" font="WMP_Font" color="FFFFFF">
