@@ -1,9 +1,5 @@
 <GuiXml>
-
-
   <Controls>
-
-    <!-- Every control's name must be *unique*. -->
     <TopLevelControl name="WMP_DebugMap_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
       <Dimensions x="300" y="430"/>
       <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-300" offsetY="50" />
@@ -161,6 +157,5 @@
 
       </Controls>
     </TopLevelControl>
-
   </Controls>
 </GuiXml>

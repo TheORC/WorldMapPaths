@@ -2,10 +2,9 @@
 
   <Controls>
 
-    <!-- Every control's name must be *unique*. -->
-    <TopLevelControl name="WMP_World_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
-      <Dimensions x="190" y="130"/>
-      <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-600" offsetY="50" />
+    <TopLevelControl name="WMP_WorldMap_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
+      <Dimensions x="300" y="430"/>
+      <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-200" offsetY="50" />
       <OnInitialized>WMP_WorldUI_OnInitialized(self)</OnInitialized>
       <Controls>
 
@@ -19,45 +18,143 @@
           <OnInitialized>self:SetText("|cFFAA33WMP World Menu|r");self:SetFont("ZoFontGameLargeBold");</OnInitialized>
         </Label>
 
-        <!-- Connect Button -->
-        <Control name="$(parent)DataRegion">
-          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)RemoveRegion" offsetX="10" offsetY="50"/>
-          <Dimensions x="210" y="20"/>
+        <!-- Add Button -->
+        <Control name="$(parent)AddRegion">
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="50"/>
+          <Dimensions x="300" y="20"/>
           <Controls>
-
-            <Backdrop name="$(parent)Start" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+            <Button name="$(parent)Add" inherits="WMP_LabelButton">
               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
-              <Dimensions x="80"/>
-              <Controls>
-                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
-                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
-                </EditBox>
-              </Controls>
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Add()</OnClicked>
+              <OnInitialized>WMP_LabelButton_OnInitialized(self, "Add")</OnInitialized>
+            </Button>
+
+            <Button name="$(parent)ConnectLast" inherits="WMP_LabelCheck">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Add" />
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Add")</OnInitialized>
+            </Button>
+          </Controls>
+        </Control>
+
+        <!-- Remove Button -->
+        <Control name="$(parent)RemoveRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)AddRegion" offsetY="20"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)Remove" inherits="WMP_LabelButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Remove()</OnClicked>
+              <OnInitialized>WMP_LabelButton_OnInitialized(self, "Remove")</OnInitialized>
+            </Button>
+
+            <Backdrop name="$(parent)RemoveEdit" inherits="WMP_EditBackdrop">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Remove" />
+              <Dimensions x="150"/>
+              <OnInitialized>WMP_EditBackdrop_OnInitialized(self, "Node ID")</OnInitialized>
+            </Backdrop>
+          </Controls>
+        </Control>
+
+        <!-- Connect Button -->
+        <Control name="$(parent)ConnectRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)RemoveRegion" offsetY="20"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)Connect" inherits="WMP_LabelButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnClicked>WMP_DebugUI_Connect()</OnClicked>
+              <OnInitialized>WMP_LabelButton_OnInitialized(self, "Connect")</OnInitialized>
+            </Button>
+
+            <Backdrop name="$(parent)Node1" inherits="WMP_EditBackdrop">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Connect" />
+              <Dimensions x="70"/>
+              <OnInitialized>WMP_EditBackdrop_OnInitialized(self, "Node ID")</OnInitialized>
             </Backdrop>
 
-            <Backdrop name="$(parent)Goal" inherits="ZO_SingleLineEditBackdrop_Keyboard">
-              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Start" offsetX="10"/>
-              <Dimensions x="80"/>
-              <Controls>
-                <EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop" defaultText="Node ID">
-                  <OnFocusGained>WMP_DebugUI_OnEditFocus(self)</OnFocusGained>
-                </EditBox>
-              </Controls>
+            <Backdrop name="$(parent)Node2" inherits="WMP_EditBackdrop">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Node1" offsetX="10"/>
+              <Dimensions x="70"/>
+              <OnInitialized>WMP_EditBackdrop_OnInitialized(self, "Node ID")</OnInitialized>
             </Backdrop>
 
           </Controls>
         </Control>
 
-        <Button name="$(parent)Render" inherits="ZO_DefaultButton">
-          <Anchor point="BOTTOM" relativePoint="BOTTOM" offsetY="-10" />
-          <Dimensions x="120"/>
-          <OnClicked>WMP_TestUI_Render()</OnClicked>
+        <!-- Disconect Button -->
+        <Control name="$(parent)DisconnectRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)ConnectRegion" offsetY="20"/>
+          <Dimensions x="300" y="20"/>
           <Controls>
-            <Label name="$(parent)Text" font="WMP_Font" color="FFFFFF">
-              <Anchor point="CENTER" relativePoint="CENTER" />
-              <OnInitialized>self:SetText("|cFFAA33Render|r")</OnInitialized>
-            </Label>
+            <Button name="$(parent)Disconnect" inherits="WMP_LabelButton">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <Dimensions x="120"/>
+              <OnInitialized>WMP_LabelButton_OnInitialized(self, "Disconnect")</OnInitialized>
+              <OnClicked>WMP_DebugUI_Disconnect()</OnClicked>
+            </Button>
+
+            <Backdrop name="$(parent)Node1" inherits="WMP_EditBackdrop">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Disconnect" />
+              <Dimensions x="70"/>
+              <OnInitialized>WMP_EditBackdrop_OnInitialized(self, "Node ID")</OnInitialized>
+            </Backdrop>
+
+            <Backdrop name="$(parent)Node2" inherits="WMP_EditBackdrop">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Node1" offsetX="10"/>
+              <Dimensions x="70"/>
+              <OnInitialized>WMP_EditBackdrop_OnInitialized(self, "Node ID")</OnInitialized>
+            </Backdrop>
+
           </Controls>
+        </Control>
+
+        <!-- Settings -->
+        <Control name="$(parent)SettingsRegion">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)DisconnectRegion" offsetY="20" offsetX="10"/>
+          <Dimensions x="300" y="20"/>
+          <Controls>
+            <Button name="$(parent)ShowPoints" inherits="WMP_LabelCheck" clickSound="Click">
+              <Anchor point="LEFT" relativePoint="LEFT" />
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Points")</OnInitialized>
+              <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
+            </Button>
+
+            <Button name="$(parent)ShowPath" inherits="WMP_LabelCheck" clickSound="Click">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)ShowPointsLabel" offsetX="10"/>
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Path")</OnInitialized>
+              <OnClicked>WMP_DebugUI_Setting_ShowPath(self)</OnClicked>
+            </Button>
+
+          </Controls>
+        </Control>
+
+        <Label name="$(parent)CopyTitle" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" font="ZoFontGame" text="Copy">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)SettingsRegion" offsetY="10"/>
+        </Label>
+
+        <Backdrop name="$(parent)Edit" inherits="ZO_MultiLineEditBackdrop_Keyboard">
+          <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)CopyTitle" offsetY="5"/>
+          <Dimensions x="260" y="100" />
+          <Controls>
+            <EditBox name="$(parent)CopyBox" inherits="WMP_FocusEditBox"/>
+          </Controls>
+        </Backdrop>
+
+        <Button name="$(parent)Save" inherits="WMP_LabelButton">
+          <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" offsetX="20" offsetY="-15" />
+          <Dimensions x="120"/>
+          <OnInitialized>WMP_LabelButton_OnInitialized(self, "Save")</OnInitialized>
+          <OnClicked>WMP_DebugUI_Save()</OnClicked>
+        </Button>
+
+        <Button name="$(parent)Load" inherits="WMP_LabelButton">
+          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" offsetX="-20" offsetY="-15"/>
+          <Dimensions x="120"/>
+          <OnInitialized>WMP_LabelButton_OnInitialized(self, "Load")</OnInitialized>
+          <OnClicked>WMP_DebugUI_Load()</OnClicked>
         </Button>
 
       </Controls>

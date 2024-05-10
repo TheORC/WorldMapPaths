@@ -31,9 +31,9 @@ Managers/MapManager.lua
 Dev/MapMaker.lua
 Dev/MapUI.lua
 Dev/MapUI.xml
+Dev/WorldUI.lua
+Dev/WorldUI.xml
 Dev/TestUI.lua
-Dev/TestUI.xml
-Dev/Test.lua
 
 WMP.lua
 bindings.xml
