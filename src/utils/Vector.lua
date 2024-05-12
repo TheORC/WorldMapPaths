@@ -2,7 +2,7 @@
 ---@class WMP_Vector
 ---@field public x number
 ---@field public y number
-WMP_Vector = ZO_InitializingObject:Subclass()
+WMP_Vector = { x = 0, y = 0 }
 
 ---Creates a new Vector class
 ---@param x number
@@ -16,9 +16,13 @@ end
 ---Creates a new vector.
 ---@param x number
 ---@param y number
-function WMP_Vector:Initialize(x, y)
+---@return WMP_Vector
+function WMP_Vector:New(x, y)
+  local object = setmetatable({}, self)
+  self.__index = self
   self.x = x or 0
   self.y = y or 0
+  return object
 end
 
 ---Addition
@@ -74,10 +78,6 @@ function WMP_Vector.__unm(a)
   return new(-a.x, -a.y)
 end
 
---function WMP_Vector:__toString()
---  return "Vector x: " .. self.x .. " y: " .. self.y
---end
-
 ---Distance
 ---@param a WMP_Vector
 ---@param b WMP_Vector
@@ -86,6 +86,9 @@ function WMP_Vector.dist(a, b)
   return math.sqrt((a.x - b.x) ^ 2 + (a.y - b.y) ^ 2)
 end
 
-function WMP_Vector.__toString(self)
-  return "Vector x: " .. self.x .. " y: " .. self.y
+---Returns a vector as a string
+---@param self WMP_Vector
+---@return string
+function WMP_Vector.__tostring(self)
+  return "(" .. self.x .. ", " .. self.y .. ")"
 end

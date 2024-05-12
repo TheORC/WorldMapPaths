@@ -16,7 +16,12 @@ local function WMP_Message(mode, message, ...)
     return
   end
 
-  d(zo_strformat("|c0000F1[TPS]:|r |c<<1>><<2>>|r", mode, zo_strformat(message, ...)))
+  local convertedArgs = { ... }
+  for i, item in ipairs(convertedArgs) do
+    convertedArgs[i] = tostring(item)
+  end
+
+  d(zo_strformat("|c0000F1[TPS]:|r |c<<1>><<2>>|r", mode, zo_strformat(message, unpack(convertedArgs))))
 end
 
 ---@class WMP_Messenger

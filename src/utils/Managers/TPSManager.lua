@@ -28,9 +28,7 @@ function WMP_TPSManager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
   WMP_MESSENGER:Debug("OnPingAdded() Type: <<1>> Tag: <<2>> X: <<3>> Y: <<4>> Owner: <<4>>", pingType, pingTag, x, y,
     isPingOwner)
 
-  ---@diagnostic disable-next-line: undefined-field
   self.m_playerTarget = WMP_Vector:New(GPS:LocalToGlobal(x, y))
-
   self:DrawPath(self.m_playerTarget)
 end
 
@@ -75,7 +73,8 @@ end
 ---Method called to draw the path on the map
 ---@param target WMP_Vector
 function WMP_TPSManager:DrawPath(target)
-  WMP_MESSENGER:Debug("DrawPath() <<1>>", WMP_Vector.__toString(target))
+  d(target)
+  WMP_MESSENGER:Debug("DrawPath() <<1>>", target)
 
   if not self.m_map or not target then
     WMP_MESSENGER:Debug("DrawPath() No map or not target.")

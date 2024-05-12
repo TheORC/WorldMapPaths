@@ -23,7 +23,6 @@ local function newVectorAtPosition()
   local x, y = GetMapPlayerPosition("player")
   local gX, gY = GPS:LocalToGlobal(x, y)
 
-  ---@diagnostic disable-next-line: undefined-field
   return WMP_Vector:New(gX, gY)
 end
 
