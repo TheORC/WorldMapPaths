@@ -2,8 +2,7 @@
 --- @author: AnotherORC
 --- GPS (But TPS)
 
-local WMP = {}
-local IS_DEBUG = true
+local IS_DEBUG = false
 
 WMP_SETTINGS = {
     NAME         = "WorldMapPaths",
@@ -12,7 +11,17 @@ WMP_SETTINGS = {
     AUTHOR       = "AnotherORC",
 }
 
-WMP_ADD_NODE_TEXT = "Add node"
+---Returns the state of debug mode
+---@return boolean
+function WMP_InDebugMode()
+    return IS_DEBUG
+end
+
+---Sets the state of debug mode
+---@param mode boolean
+function WMP_SetDebugMode(mode)
+    IS_DEBUG = mode
+end
 
 ---Takes a string and splits it into words
 ---@param args string
@@ -39,50 +48,46 @@ local function OnAddonLoad(_, name)
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
 
-    ZO_CreateStringId("WMP_ADD_NODE_TEXT", WMP_ADD_NODE_TEXT)
-    SafeAddVersion("WMP_ADD_NODE_TEXT", 1)
-    ZO_CreateStringId("SI_BINDING_NAME_WMP_ADD_NODE", GetString(WMP_ADD_NODE_TEXT))
-
     -- Load our storage
     WMP_STORAGE:LoadData()
-    WMP_MAP_MANAGER:LateInitialize()
+    WMP_TPS_MANAGER:LateInitialize()
     WMP_WORLD_MAKER:LoadWorldMap()
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)
 
         if #options == 0 or options[1] == 'help' then
-            d('/wmp debug - toggle debug mode')
-            d('/wmp start - starts the map maker')
-            d('/wmp reset - resets the map maker')
-            d('/wmp add - adds a new node to the map and connect to previous.')
-            d('/wmp add false - adds node but don\'t connect to previous.')
-            d('/wmp remove %1 - remove a node from the map.')
-            d('/wmp connect %1 %2 - connect two nodes together')
-            d('/wmp disconnect %1 %2 - remove the connection between two nodes')
-            d('/wmp load - loads the current zone if it exists')
-            d('/wmp save - saves the current zone to storage')
-            d('/wmp list - list all the map nodes')
-            d('/wmp draw - draw the current map')
+            if WMP_InDebugMode() then
+                WMP_MESSENGER:Message('/wmp debug - toggle debug mode')
+                WMP_MESSENGER:Message('/wmp start - starts the map maker')
+                WMP_MESSENGER:Message('/wmp reset - resets the map maker')
+                WMP_MESSENGER:Message('/wmp add - adds a new node to the map and connect to previous.')
+                WMP_MESSENGER:Message('/wmp add false - adds node but don\'t connect to previous.')
+                WMP_MESSENGER:Message('/wmp remove %1 - remove a node from the map.')
+                WMP_MESSENGER:Message('/wmp connect %1 %2 - connect two nodes together')
+                WMP_MESSENGER:Message('/wmp disconnect %1 %2 - remove the connection between two nodes')
+                WMP_MESSENGER:Message('/wmp load - loads the current zone if it exists')
+                WMP_MESSENGER:Message('/wmp save - saves the current zone to storage')
+                WMP_MESSENGER:Message('/wmp list - list all the map nodes')
+                WMP_MESSENGER:Message('/wmp draw - draw the current map')
+            else
+                WMP_MESSENGER:Message('/wmp debug - toggle debug mode')
+            end
+
             return
         end
 
         local command = options[1]
 
+        -- Toggle the state of the the debug mode
         if command == 'debug' then
-            if WMP_DEBUG_CONTROLLER:IsDebug() then
-                WMP_DEBUG_CONTROLLER:DisableDebug()
-            else
-                WMP_DEBUG_CONTROLLER:EnableDebug()
-            end
-
-            -- Make sure the map manager understands what is happening
-            WMP_MAP_MANAGER:UpdateDebugState()
+            WMP_SetDebugMode(not WMP_InDebugMode())
+            WMP_MESSENGER:Message("Debug state: <<1>>", WMP_InDebugMode() and "enabled" or "disabled")
             return
         end
 
-        if not WMP_DEBUG_CONTROLLER:IsDebug() then
-            d("Commands only active during debug mode")
+        if not WMP_InDebugMode() then
+            WMP_MESSENGER:Message("You may only issue commands when in debug mode.  Use '/wmp debug'")
             return
         end
 

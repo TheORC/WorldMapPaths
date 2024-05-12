@@ -10,7 +10,6 @@ function WMP_DebugController:Initialize(control)
   self.isWorldActive = true
   self.isDebug = true
 
-
   self.mapController:SetHidden(true)
   self.worldController:SetHidden(true)
 
@@ -23,22 +22,23 @@ end
 
 ---Enable and show the debug menus
 function WMP_DebugController:EnableDebug()
+  self.control:SetHidden(false)
+  self.isDebug = true
+
   if self.isWorldActive then
     self.worldController:SetHidden(false)
   else
     self.mapController:SetHidden(false)
   end
-
-  self.control:SetHidden(false)
-  self.isDebug = true
 end
 
 ---Disable and hide the debug menus
 function WMP_DebugController:DisableDebug()
-  self.worldController:SetHidden(true)
-  self.mapController:SetHidden(true)
   self.control:SetHidden(true)
   self.isDebug = false
+
+  self.worldController:SetHidden(true)
+  self.mapController:SetHidden(true)
 end
 
 ---Turn on the world menu
@@ -81,6 +81,7 @@ end
 ---@param self any
 function WMP_DebugController_OnInitialized(self)
   ---@type WMP_DebugController
+  ---@diagnostic disable-next-line: undefined-field
   WMP_DEBUG_CONTROLLER = WMP_DebugController:New(self)
 end
 

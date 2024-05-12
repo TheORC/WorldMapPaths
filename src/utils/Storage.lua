@@ -47,8 +47,10 @@ function WMP_Storage:StoreMap(map)
     local mapData = nil
 
     if getmetatable(map) == WMP_Zone then
+        ---@diagnostic disable-next-line: param-type-mismatch
         mapData = WMP_Zone:MapToStorage(map)
     elseif getmetatable(map) == WMP_World then
+        ---@diagnostic disable-next-line: param-type-mismatch
         mapData = WMP_World:MapToStorage(map)
     else
         d("Unable to save the map. Unknonw type!")
@@ -64,7 +66,7 @@ end
 
 ---Loads a map from storage
 ---@param zoneId integer
----@return WMP_MAP|nil
+---@return WMP_Map|nil
 function WMP_Storage:GetMap(zoneId)
     local index = self:FindMapIndex(zoneId)
 

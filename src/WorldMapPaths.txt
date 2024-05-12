@@ -7,9 +7,14 @@
 ## SavedVariables: WorldMapPathsVars
 ## DependsOn: LibAddonMenu-2.0 LibMapPins-1.0 LibGPS>=30 LibMapPing
 
+lang/en.lua
+lang/$(language).lua
+
 utils/AStar.lua
 utils/Vector.lua
 utils/PlayerUtils.lua
+utils/MessageUtils.lua
+utils/Storage.lua
 utils/Nodes/Node.lua
 utils/Nodes/ZoneNode.lua
 utils/Paths/PathBuilder.lua
@@ -19,19 +24,22 @@ utils/Maps/World.lua
 utils/Renderers/Renderer.lua
 utils/Renderers/DebugRenderer.lua
 utils/Renderers/PathRenderer.lua
+utils/Managers/PathManager.lua
+utils/Managers/TPSManager.lua
+utils/Managers/DebugManager.lua
 
-UI/Line.lua 
+UI/Line.lua
 UI/Path.lua
 UI/ShortestPath.lua
 UI/ZonePath.lua
 UI/Controls.lua
 UI/Controls.xml
 
-Managers/Storage.lua
-Managers/MapManager.lua
 
-Dev/MapMaker.lua
-Dev/WorldMaker.lua
+
+Makers/MapMaker.lua
+Makers/WorldMaker.lua
+
 Dev/MapUI.lua
 Dev/MapUI.xml
 Dev/WorldUI.lua

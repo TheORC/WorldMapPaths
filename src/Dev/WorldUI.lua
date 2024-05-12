@@ -82,6 +82,7 @@ function WMP_GetWorldUI()
 end
 
 function WMP_WorldUI_OnInitialized(self)
+  ---@diagnostic disable-next-line: undefined-field
   self.m_object = WMP_WorldUI:New(self)
 end
 

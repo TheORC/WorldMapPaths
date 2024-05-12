@@ -51,10 +51,10 @@ function WMP_Map_Maker:Start()
 
   if WMP_STORAGE:GetMap(getPlayerZone()) then
     d('Existing map found, loading it: ' .. getPlayerZone())
+    ---@diagnostic disable-next-line: assign-type-mismatch
     self.map = WMP_STORAGE:GetMap(getPlayerZone())
   else
     d('Map maker running for zone: ' .. getPlayerZone())
-    ---@diagnostic disable-next-line: undefined-field
     self.map = WMP_Zone:New(getPlayerZone())
   end
 end
@@ -176,6 +176,7 @@ function WMP_Map_Maker:Load()
   end
 
   -- Set the map
+  ---@diagnostic disable-next-line: assign-type-mismatch
   self.map = map
   d("Map loaded.")
 end

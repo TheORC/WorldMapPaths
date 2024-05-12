@@ -78,6 +78,7 @@ function WMP_WorldMaker:LoadWorldMap()
   local map = self:GetMap()
 
   if not map then
+    ---@diagnostic disable-next-line: undefined-field
     map = WMP_World:New()
   end
 
@@ -88,6 +89,7 @@ end
 ---@return WMP_World|nil
 function WMP_WorldMaker:GetMap()
   if not self.world then
+    ---@diagnostic disable-next-line: assign-type-mismatch
     self.world = WMP_STORAGE:GetMap(0)
   end
   return self.world
@@ -105,4 +107,5 @@ do
 end
 
 ---@type WMP_WorldMaker
+---@diagnostic disable-next-line: undefined-field
 WMP_WORLD_MAKER = WMP_WorldMaker:New()

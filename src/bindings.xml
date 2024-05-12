@@ -1,7 +1,7 @@
 <Bindings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sir.insidi.at/or/schema/esobindings.xsd">
   <Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
     <Category name="WorldMapPaths">
-      <Action name="WMP_ADD_NODE">
+      <Action name="WMP_ADD_NODE_TEXT">
         <Down>WMP_DebugUI_Add()</Down>
       </Action>
     </Category>

@@ -6,6 +6,7 @@ local WMP_Debug_Menu = ZO_Object:Subclass()
 
 function WMP_Debug_Menu:New(...)
   local object = ZO_Object.New(self)
+  ---@diagnostic disable-next-line: undefined-field, need-check-nil
   object:Initialize(...)
   return object
 end
@@ -110,7 +111,9 @@ end
 ---Method used to focus text inside an EditBox when it revieves focus
 ---@param self EditBox
 function WMP_DebugUI_OnEditFocus(self)
+  ---@diagnostic disable-next-line: undefined-field
   local text = self:GetText() or ""
+  ---@diagnostic disable-next-line: undefined-field
   self:SetSelection(0, #text)
 end
 
