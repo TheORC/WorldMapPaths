@@ -74,9 +74,9 @@ function WMP_Vector.__unm(a)
   return new(-a.x, -a.y)
 end
 
-function WMP_Vector:__toString()
-  return "Vector x: " .. self.x .. " y: " .. self.y
-end
+--function WMP_Vector:__toString()
+--  return "Vector x: " .. self.x .. " y: " .. self.y
+--end
 
 ---Distance
 ---@param a WMP_Vector
@@ -84,4 +84,8 @@ end
 ---@return number
 function WMP_Vector.dist(a, b)
   return math.sqrt((a.x - b.x) ^ 2 + (a.y - b.y) ^ 2)
+end
+
+function WMP_Vector.__toString(self)
+  return "Vector x: " .. self.x .. " y: " .. self.y
 end

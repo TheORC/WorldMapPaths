@@ -2,15 +2,15 @@
 --- @author: AnotherORC
 --- GPS (But TPS)
 
-local IS_DEBUG = true
-local IS_MAKE = true
-
 WMP_SETTINGS = {
     NAME         = "WorldMapPaths",
     DISPLAY_NAME = "World Map Paths",
     VERSION      = "${VERSION}",
     AUTHOR       = "AnotherORC",
 }
+
+local IS_DEBUG = false
+local IS_MAKE = false
 
 ---Returns the state of make mode
 ---@return boolean

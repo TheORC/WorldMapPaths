@@ -5,7 +5,7 @@ local GPS = LibGPS3
 ---Class responsible for the rendering of paths on the world map
 ---@class WMP_TPSManager : TPS_PathManager
 ---@field private m_renderer WMP_Renderer
----@field private m_map WMP_Renderer
+---@field private m_map WMP_Map
 ---@field private m_playerTarget WMP_Vector
 ---@diagnostic disable-next-line: undefined-field
 local WMP_TPSManager = TPS_PathManager:Subclass()
@@ -25,8 +25,12 @@ end
 ---@param y number
 ---@param isPingOwner boolean
 function WMP_TPSManager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
+  WMP_MESSENGER:Debug("OnPingAdded() Type: <<1>> Tag: <<2>> X: <<3>> Y: <<4>> Owner: <<4>>", pingType, pingTag, x, y,
+    isPingOwner)
+
   ---@diagnostic disable-next-line: undefined-field
   self.m_playerTarget = WMP_Vector:New(GPS:LocalToGlobal(x, y))
+
   self:DrawPath(self.m_playerTarget)
 end
 
@@ -37,6 +41,9 @@ end
 ---@param y number
 ---@param isPingOwner boolean
 function WMP_TPSManager:OnPingRemoved(pingType, pingTag, x, y, isPingOwner)
+  WMP_MESSENGER:Debug("OnPingRemoved() Type: <<1>> Tag: <<2>> X: <<3>> Y: <<4>> Owner: <<4>>", pingType, pingTag, x, y,
+    isPingOwner)
+
   self.m_playerTarget = nil
   self.m_renderer:Clear()
 end
@@ -46,6 +53,8 @@ end
 function WMP_TPSManager:OnMapChanged()
   -- Get the information about the current map
   local mapType = GetMapType()
+
+  WMP_MESSENGER:Debug("OnMapChanged() Type: <<1>>", mapType)
 
   -- Not a map we draw yet
   if (mapType ~= MAPTYPE_ZONE and mapType ~= MAPTYPE_SUBZONE) or not WMP_IsPlayerInCurrentZone() then
@@ -66,7 +75,10 @@ end
 ---Method called to draw the path on the map
 ---@param target WMP_Vector
 function WMP_TPSManager:DrawPath(target)
-  if not self:GetMap() or not target then
+  WMP_MESSENGER:Debug("DrawPath() <<1>>", WMP_Vector.__toString(target))
+
+  if not self.m_map or not target then
+    WMP_MESSENGER:Debug("DrawPath() No map or not target.")
     return
   end
 
@@ -75,10 +87,11 @@ function WMP_TPSManager:DrawPath(target)
   ---@diagnostic disable-next-line: undefined-field
   local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
-  local pathStart = self:GetMap():GetClosestNode(startPos)
-  local pathEnd = self:GetMap():GetClosestNode(endPos)
+  local pathStart = self.m_map:GetClosestNode(startPos)
+  local pathEnd = self.m_map:GetClosestNode(endPos)
 
   if not pathStart or not pathEnd then
+    WMP_MESSENGER:Debug("DrawPath() No path start or path end.")
     return
   end
 
@@ -89,24 +102,21 @@ function WMP_TPSManager:DrawPath(target)
   self.m_renderer:Draw()
 end
 
----Returns the current map
----@return WMP_Map
-function WMP_TPSManager:GetMap()
-  return self.m_map
-end
-
 do
   ---Calculates a path between zones based on their provided id.
   ---@param startId integer
   ---@param endId integer
   ---@return WMP_Path
   function WMP_TPSManager:CalculateZonePath(startId, endId)
+    WMP_MESSENGER:Debug("Calculating a zone path between <<1>> and <<2>>", startId, endId)
     return nil
   end
 
   ---Load the zone with the specified id.
   ---@param zoneId integer
   function WMP_TPSManager:LoadZone(zoneId)
+    WMP_MESSENGER:Debug("Loading zone <<1>> from storage", zoneId)
+
     -- Don't load the map if it's already loaded
     if self.m_map and self.m_map:GetZoneId() == zoneId then
       WMP_MESSENGER:Debug("LoadZone() zone id is <<1>> is already loaded", zoneId)
@@ -114,19 +124,13 @@ do
     end
 
     local map = WMP_STORAGE:GetMap(zoneId)
+
     if map then
       WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> loaded from storage", zoneId)
       self.m_map = map
     else
       WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> not in storage", zoneId)
     end
-  end
-
-  ---Gets the zone data for the given id
-  ---@param zoneId integer
-  ---@return WMP_Map|nil
-  function WMP_TPSManager:GetZoneMap(zoneId)
-    return WMP_STORAGE:GetMap(zoneId)
   end
 end
 
