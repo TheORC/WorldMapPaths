@@ -35,17 +35,11 @@ UI/ZonePath.lua
 UI/Controls.lua
 UI/Controls.xml
 
-
-
 Makers/MapMaker.lua
 Makers/WorldMaker.lua
 
 Dev/MapUI.lua
 Dev/MapUI.xml
-Dev/WorldUI.lua
-Dev/WorldUI.xml
-Dev/DebugController.lua
-Dev/DebugController.xml
 
 WMP.lua
 bindings.xml
