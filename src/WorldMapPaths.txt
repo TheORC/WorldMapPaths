@@ -22,8 +22,8 @@ utils/Maps/Map.lua
 utils/Maps/Zone.lua
 utils/Maps/World.lua
 utils/Renderers/Renderer.lua
-utils/Renderers/DebugRenderer.lua
 utils/Renderers/PathRenderer.lua
+utils/Renderers/DebugRenderer.lua
 utils/Managers/PathManager.lua
 utils/Managers/TPSManager.lua
 utils/Managers/DebugManager.lua

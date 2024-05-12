@@ -1,13 +1,13 @@
 ---Class for creating a path renderer
----@class WMP_Path_Render : WMP_Renderer
-local WMP_Path_Render = WMP_Renderer:Subclass()
+---@class WMP_PathRender : WMP_Renderer
+local WMP_PathRender = WMP_Renderer:Subclass()
 
-function WMP_Path_Render:Initialize()
+function WMP_PathRender:Initialize()
   WMP_Renderer.Initialize(self, 'Path')
 end
 
 ---Method for drawing the provided path on the current map
-function WMP_Path_Render:Draw()
+function WMP_PathRender:Draw()
   self:Clear()
 
   if self.path == nil then
@@ -19,7 +19,7 @@ end
 
 do
   ---Method for drawing a path on the current map
-  function WMP_Path_Render:DrawPath()
+  function WMP_PathRender:DrawPath()
     local linkControl, startX, startY, endX, endY
     local mapWidth, mapHeight = ZO_WorldMapContainer:GetDimensions()
 
@@ -45,5 +45,6 @@ do
   end
 end
 
----@type WMP_Path_Render
-WMP_PATH_RENDERER = WMP_Path_Render:New()
+---@type WMP_PathRender
+---@diagnostic disable-next-line: undefined-field
+WMP_PATH_RENDERER = WMP_PathRender:New()

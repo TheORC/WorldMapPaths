@@ -8,37 +8,17 @@ local PingLib = LibMapPing2
 local GPS = LibGPS3
 
 ---Class responsible for the rendering of paths on the world map
----@class WMP_TPSManager
+---@class WMP_TPSManager : TPS_PathManager
 ---@field renderer WMP_Renderer
----@field map WMP_Map
----@field is_debug boolean
----@field player_target WMP_Vector
-local WMP_TPSManager = ZO_InitializingObject:Subclass()
+---@diagnostic disable-next-line: undefined-field
+local WMP_TPSManager = TPS_PathManager:Subclass()
 
+---Create a normal TPS path manager
 function WMP_TPSManager:Initialize()
-  self.map = nil
-  self.player_target = nil
-  self.renderer = WMP_PATH_RENDERER -- WMP_DEBUG_RENDERER -- WMP_PATH_RENDERER
-end
+  TPS_PathManager.Initialize(self, WMP_PATH_RENDERER)
 
-function WMP_TPSManager:LateInitialize()
-  local function OnPingAdded(...)
-    self:OnPingAdded(...)
-  end
-
-  local function OnPingRemoved(...)
-    self:OnPingRemoved(...)
-  end
-
-  local function OnMapChanged()
-    self:OnMapChanged()
-  end
-
-  PingLib:RegisterCallback("AfterPingAdded", OnPingAdded)
-  PingLib:RegisterCallback("AfterPingRemoved", OnPingRemoved)
-
-  CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", OnMapChanged)
-  CALLBACK_MANAGER:RegisterCallback("OnWorldMapModeChanged", OnMapChanged)
+  self.m_map = nil
+  self.m_playerTarget = nil
 end
 
 ---Method called everytime a ping is added to the map
@@ -48,16 +28,9 @@ end
 ---@param y number
 ---@param isPingOwner boolean
 function WMP_TPSManager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
-  self.player_target = WMP_Vector:New(GPS:LocalToGlobal(x, y))
-  local lX, lY = self.player_target.x, self.player_target.y
-
-  if self:GetPlayerZoneId() == self:GetZoneIdFromPosition(lX, lY) then
-    d('In the same zone')
-  else
-    d('in multiple zones!')
-  end
-
-  self:DrawPath(self.player_target)
+  ---@diagnostic disable-next-line: undefined-field
+  self.m_playerTarget = WMP_Vector:New(GPS:LocalToGlobal(x, y))
+  self:DrawPath(self.m_playerTarget)
 end
 
 ---Method called everytime a ping is removed from the map
@@ -67,8 +40,8 @@ end
 ---@param y number
 ---@param isPingOwner boolean
 function WMP_TPSManager:OnPingRemoved(pingType, pingTag, x, y, isPingOwner)
-  self.player_target = nil
-  self.renderer:Clear()
+  self.m_playerTarget = nil
+  self.m_renderer:Clear()
 end
 
 ---Method called when the current map being viewed is changed
@@ -78,35 +51,31 @@ function WMP_TPSManager:OnMapChanged()
   local mapType = GetMapType()
 
   -- Not a map we draw yet
-  if (mapType ~= MAPTYPE_ZONE and mapType ~= MAPTYPE_SUBZONE) or not self:PlayerInCurrentZone() then
-    self.renderer:Clear()
+  if (mapType ~= MAPTYPE_ZONE and mapType ~= MAPTYPE_SUBZONE) or not WMP_IsPlayerInCurrentZone() then
+    WMP_MESSENGER:Debug("OnMapChanged() wrong map type or player not in zone")
+    self.m_renderer:Clear()
     return
   end
 
   -- Load the current map
-  self:LoadZone(self:GetCurrentZoneId())
+  self:LoadZone(WMP_GetActiveMapZoneId())
 
   -- We have a target draw it
-  if self.player_target or WMP_DEBUG_CONTROLLER:IsDebug() then
-    self:DrawPath(self.player_target)
+  if self.m_playerTarget then
+    self:DrawPath(self.m_playerTarget)
   end
 end
 
 ---Method called to draw the path on the map
 ---@param target WMP_Vector
 function WMP_TPSManager:DrawPath(target)
-  -- The render handles most of this logic itself.
-  if WMP_DEBUG_CONTROLLER:IsDebug() then
-    self.renderer:Draw()
-    return
-  end
-
   if not self:GetMap() or not target then
     return
   end
 
-  local zoneId = self:GetPlayerZoneId()
-  local startPos = self:GetPlayerPosition()
+  local zoneId = WMP_GetPlayerZoneId()
+  local startPos = WMP_GetPlayerLocalPos()
+  ---@diagnostic disable-next-line: undefined-field
   local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
   local pathStart = self:GetMap():GetClosestNode(startPos)
@@ -116,34 +85,17 @@ function WMP_TPSManager:DrawPath(target)
     return
   end
 
+  ---@diagnostic disable-next-line: undefined-field
   local path = WMP_ZonePath:New(zoneId, pathStart, pathEnd)
 
-  self.renderer:SetPath(path)
-  self.renderer:Draw()
-end
-
----Toggle the renderer between the debug render and path renderer
-function WMP_TPSManager:UpdateDebugState()
-  -- Clear the existing renderer
-  if self.renderer then
-    self.renderer:Clear()
-  end
-
-  if WMP_DEBUG_CONTROLLER:IsDebug() then
-    self.renderer = WMP_DEBUG_RENDERER
-  else
-    self.renderer = WMP_PATH_RENDERER
-  end
+  self.m_renderer:SetPath(path)
+  self.m_renderer:Draw()
 end
 
 ---Returns the current map
----@return WMP_Zone
+---@return WMP_Map
 function WMP_TPSManager:GetMap()
-  if WMP_DEBUG_CONTROLLER:IsDebug() then
-    return WMP_DEBUG_CONTROLLER:GetActiveMap()
-  else
-    return self.map
-  end
+  return self.m_map
 end
 
 do
@@ -158,61 +110,19 @@ do
   ---Load the zone with the specified id.
   ---@param zoneId integer
   function WMP_TPSManager:LoadZone(zoneId)
-    -- Not responsible for the map in debug
-    if WMP_DEBUG_CONTROLLER:IsDebug() then
-      return
-    end
-
     -- Don't load the map if it's already loaded
-    if self.map and self.map:GetZoneId() == zoneId then
+    if self.m_map and self.m_map:GetZoneId() == zoneId then
+      WMP_MESSENGER:Debug("LoadZone() zone id is <<1>> is already loaded", zoneId)
       return
     end
 
     local map = WMP_STORAGE:GetMap(zoneId)
     if map then
-      self.map = map
+      WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> loaded from storage", zoneId)
+      self.m_map = map
+    else
+      WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> not in storage", zoneId)
     end
-  end
-
-  ---Returns the id of the current viewed zone
-  ---@return integer
-  function WMP_TPSManager:GetCurrentZoneId()
-    local measure = GPS:GetCurrentMapMeasurement()
-    return measure:GetZoneId()
-  end
-
-  ---Returns the id of the player's current zone.
-  ---@return integer
-  function WMP_TPSManager:GetPlayerZoneId()
-    local zoneId, _, _, _ = GetUnitWorldPosition("player")
-    return zoneId
-  end
-
-  ---Checks if the player is in the currently viewed zone.
-  ---@return boolean
-  function WMP_TPSManager:PlayerInCurrentZone()
-    return self:GetCurrentZoneId() == self:GetPlayerZoneId()
-  end
-
-  ---Get's the player current location
-  ---@return WMP_Vector
-  function WMP_TPSManager:GetPlayerPosition()
-    return WMP_Vector:New(GetMapPlayerPosition("player"))
-  end
-
-  ---Get's the zone id at the provided position.
-  ---@param x number
-  ---@param y number
-  ---@return integer
-  function WMP_TPSManager:GetZoneIdFromPosition(x, y)
-    GPS:PushCurrentMap()
-    GPS:SetMapToRootMap(x, y)
-    GPS:MapZoomInMax(x, y)
-
-    local zoneId = self:GetCurrentZoneId()
-    GPS:PopCurrentMap()
-
-    return zoneId
   end
 
   ---Gets the zone data for the given id
@@ -224,4 +134,5 @@ do
 end
 
 ---@type WMP_TPSManager
+---@diagnostic disable-next-line: undefined-field
 WMP_TPS_MANAGER = WMP_TPSManager:New()
