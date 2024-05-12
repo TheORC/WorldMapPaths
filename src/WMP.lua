@@ -73,7 +73,7 @@ local function OnAddonLoad(_, name)
     WMP_STORAGE:LoadData()
 
     WMP_SetMakeMode(true)
-    WMP_SetDebugMode(true)
+    WMP_SetDebugMode(false)
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)

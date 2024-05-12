@@ -45,7 +45,7 @@ function WMP_MapMaker:AddNode(connect_previous)
     return
   end
 
-  WMP_MESSENGER:Message("WMP_MapMaker:AddNode() Added a new node: <<1>>", node)
+  WMP_MESSENGER:Message("Added a new node: <<1>>", node)
 
   -- Check to see if this should be connected to the previouslt placed node
   -- We don't do this for the world map
@@ -74,7 +74,7 @@ function WMP_MapMaker:RemoveNode(nodeId)
     self.m_previousNode = nil
   end
 
-  WMP_MESSENGER:Message("WMP_MapMaker:RemoveNode() Removed node <<1>> from map.", nodeId)
+  WMP_MESSENGER:Message("Removed node <<1>> from map.", nodeId)
   self:OnUpdate()
 end
 
@@ -101,7 +101,7 @@ function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB)
     return
   end
 
-  WMP_MESSENGER:Message("WMP_MapMaker:AddConnection() Added connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
+  WMP_MESSENGER:Message("Added connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
   self:OnUpdate()
 end
 
@@ -128,7 +128,7 @@ function WMP_MapMaker:RemoveConnection(nodeIdA, nodeIdB)
     return
   end
 
-  WMP_MESSENGER:Message("WMP_MapMaker:RemoveConnection() Removed connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
+  WMP_MESSENGER:Message("Removed connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
   self:OnUpdate()
 end
 
@@ -142,7 +142,7 @@ function WMP_MapMaker:Save()
   WMP_MESSENGER:Debug("WMP_MapMaker:Save() Attempting to save a map")
   WMP_STORAGE:StoreMap(self.m_map)
 
-  WMP_MESSENGER:Message("WMP_MapMaker:Save() map <<1>> saved", self.m_map:GetZoneId())
+  WMP_MESSENGER:Message("Saved map <<1>>", self.m_map:GetZoneId())
 end
 
 ---Sets the map to update for the map maker
@@ -155,7 +155,6 @@ end
 
 do
   function WMP_MapMaker:OnUpdate()
-    d('Drawing')
     WMP_TPS_DEBUG_MANAGER:Drawpath()
   end
 end

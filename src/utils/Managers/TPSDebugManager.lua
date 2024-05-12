@@ -61,6 +61,8 @@ function WMP_TPSDebugManager:LoadMap(zoneId)
   self.m_renderer:SetMap(self.m_map)
 
   self:Drawpath()
+
+  WMP_MESSENGER:Message("Map loaded: <<1>>", zoneId)
 end
 
 ---@type WMP_TPSDebugManager
