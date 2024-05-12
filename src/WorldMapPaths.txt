@@ -36,7 +36,6 @@ UI/Controls.lua
 UI/Controls.xml
 
 Makers/MapMaker.lua
-Makers/WorldMaker.lua
 
 Dev/MapUI.lua
 Dev/MapUI.xml
