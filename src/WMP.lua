@@ -52,8 +52,6 @@ local function OnAddonLoad(_, name)
     WMP_STORAGE:LoadData()
     WMP_TPS_MANAGER:Enable()
 
-    -- WMP_WORLD_MAKER:LoadWorldMap()
-
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)
 

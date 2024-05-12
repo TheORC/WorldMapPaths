@@ -8,25 +8,40 @@ TPS_PathManager = ZO_InitializingObject:Subclass()
 function TPS_PathManager:Initialize(renderer)
   self.m_renderer = renderer
   self.m_isEnabled = false
+
+  PingLib:RegisterCallback("AfterPingAdded", function(...)
+    if not self.m_isEnabled then
+      return
+    end
+    self:OnPingAdded(...)
+  end)
+  PingLib:RegisterCallback("AfterPingRemoved", function(...)
+    if not self.m_isEnabled then
+      return
+    end
+    self:OnPingRemoved(...)
+  end)
+  CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", function()
+    if not self.m_isEnabled then
+      return
+    end
+    self:OnMapChanged()
+  end)
+  CALLBACK_MANAGER:RegisterCallback("OnWorldMapModeChanged", function()
+    if not self.m_isEnabled then
+      return
+    end
+    self:OnMapChanged()
+  end)
 end
 
 ---Enable this manager
 function TPS_PathManager:Enable()
-  PingLib:RegisterCallback("AfterPingAdded", function(...) self:OnPingAdded(...) end)
-  PingLib:RegisterCallback("AfterPingRemoved", function(...) self:OnPingRemoved(...) end)
-  CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", function() self:OnMapChanged() end)
-  CALLBACK_MANAGER:RegisterCallback("OnWorldMapModeChanged", function() self:OnMapChanged() end)
-
   self.m_isEnabled = true
 end
 
 ---Disable this manager
 function TPS_PathManager:Disable()
-  PingLib:UnregisterCallback("AfterPingAdded", function(...) self:OnPingAdded(...) end)
-  PingLib:UnregisterCallback("AfterPingRemoved", function(...) self:OnPingRemoved(...) end)
-  CALLBACK_MANAGER:UnregisterCallback("OnWorldMapChanged", function() self:OnMapChanged() end)
-  CALLBACK_MANAGER:UnregisterCallback("OnWorldMapModeChanged", function() self:OnMapChanged() end)
-
   self.m_isEnabled = false
 end
 
