@@ -3,6 +3,7 @@
 --- GPS (But TPS)
 
 local IS_DEBUG = true
+local IS_MAKE = true
 
 WMP_SETTINGS = {
     NAME         = "WorldMapPaths",
@@ -10,6 +11,26 @@ WMP_SETTINGS = {
     VERSION      = "${VERSION}",
     AUTHOR       = "AnotherORC",
 }
+
+---Returns the state of make mode
+---@return boolean
+function WMP_InMakeMode()
+    return IS_MAKE
+end
+
+---Sets the state of make mode
+---@param mode boolean
+function WMP_SetMakeMode(mode)
+    IS_MAKE = mode
+
+    if IS_MAKE then
+        WMP_TPS_MANAGER:Disable()
+        WMP_TPS_DEBUG_MANAGER:Enable()
+    else
+        WMP_TPS_MANAGER:Enable()
+        WMP_TPS_DEBUG_MANAGER:Disable()
+    end
+end
 
 ---Returns the state of debug mode
 ---@return boolean
@@ -21,14 +42,6 @@ end
 ---@param mode boolean
 function WMP_SetDebugMode(mode)
     IS_DEBUG = mode
-
-    if IS_DEBUG then
-        WMP_TPS_MANAGER:Disable()
-        WMP_TPS_DEBUG_MANAGER:Enable()
-    else
-        WMP_TPS_MANAGER:Enable()
-        WMP_TPS_DEBUG_MANAGER:Disable()
-    end
 end
 
 ---Takes a string and splits it into words
@@ -64,7 +77,8 @@ local function OnAddonLoad(_, name)
         local options = parseCommandArgs(args)
 
         if #options == 0 or options[1] == 'help' then
-            if WMP_InDebugMode() then
+            if WMP_InMakeMode() then
+                WMP_MESSENGER:Message('/wmp make - toggle make mode')
                 WMP_MESSENGER:Message('/wmp debug - toggle debug mode')
                 WMP_MESSENGER:Message('/wmp start - starts the map maker')
                 WMP_MESSENGER:Message('/wmp reset - resets the map maker')
@@ -76,8 +90,8 @@ local function OnAddonLoad(_, name)
                 WMP_MESSENGER:Message('/wmp load - loads the current zone if it exists')
                 WMP_MESSENGER:Message('/wmp save - saves the current zone to storage')
                 WMP_MESSENGER:Message('/wmp list - list all the map nodes')
-                WMP_MESSENGER:Message('/wmp draw - draw the current map')
             else
+                WMP_MESSENGER:Message('/wmp make - toggle make mode')
                 WMP_MESSENGER:Message('/wmp debug - toggle debug mode')
             end
 
@@ -91,10 +105,14 @@ local function OnAddonLoad(_, name)
             WMP_SetDebugMode(not WMP_InDebugMode())
             WMP_MESSENGER:Message("Debug state: <<1>>", WMP_InDebugMode() and "enabled" or "disabled")
             return
+        elseif command == 'make' then
+            WMP_SetMakeMode(not WMP_InMakeMode())
+            WMP_MESSENGER:Message("Make state: <<1>>", WMP_InMakeMode() and "enabled" or "disabled")
+            return
         end
 
-        if not WMP_InDebugMode() then
-            WMP_MESSENGER:Message("You may only issue commands when in debug mode.  Use '/wmp debug'")
+        if not WMP_InMakeMode() then
+            WMP_MESSENGER:Message("You may only issue commands when in make mode.  Use '/wmp make'")
             return
         end
 
@@ -154,14 +172,6 @@ local function OnAddonLoad(_, name)
             end
 
             WMP_Print(WMP_MAP_MAKER:GetMap():GetNodes())
-        elseif command == 'draw' then
-            if map == nil then
-                d("No map to draw")
-                return
-            end
-
-            WMP_DEBUG_RENDERER:SetMap(map)
-            WMP_DEBUG_RENDERER:Draw()
         elseif command == 'save' then
             WMP_MAP_MAKER:Save()
         elseif command == 'load' then
