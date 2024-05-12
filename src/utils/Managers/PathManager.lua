@@ -38,11 +38,13 @@ end
 ---Enable this manager
 function TPS_PathManager:Enable()
   self.m_isEnabled = true
+  self.m_renderer:Clear()
 end
 
 ---Disable this manager
 function TPS_PathManager:Disable()
   self.m_isEnabled = false
+  self.m_renderer:Clear()
 end
 
 function TPS_PathManager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)

@@ -1,15 +1,12 @@
----File containing logic for rendeing paths on the eso world map
-
--- 1) Zone
--- 2) Tamrial
--- 3) Galaxy (Wont do)
-
-local PingLib = LibMapPing2
 local GPS = LibGPS3
+
+---File containing logic for rendeing paths on the eso world map
 
 ---Class responsible for the rendering of paths on the world map
 ---@class WMP_TPSManager : TPS_PathManager
----@field renderer WMP_Renderer
+---@field private m_renderer WMP_Renderer
+---@field private m_map WMP_Renderer
+---@field private m_playerTarget WMP_Vector
 ---@diagnostic disable-next-line: undefined-field
 local WMP_TPSManager = TPS_PathManager:Subclass()
 

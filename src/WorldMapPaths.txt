@@ -26,7 +26,7 @@ utils/Renderers/PathRenderer.lua
 utils/Renderers/DebugRenderer.lua
 utils/Managers/PathManager.lua
 utils/Managers/TPSManager.lua
-utils/Managers/DebugManager.lua
+utils/Managers/TPSDebugManager.lua
 
 UI/Line.lua
 UI/Path.lua

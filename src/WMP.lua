@@ -21,6 +21,14 @@ end
 ---@param mode boolean
 function WMP_SetDebugMode(mode)
     IS_DEBUG = mode
+
+    if IS_DEBUG then
+        WMP_TPS_MANAGER:Disable()
+        WMP_TPS_DEBUG_MANAGER:Enable()
+    else
+        WMP_TPS_MANAGER:Enable()
+        WMP_TPS_DEBUG_MANAGER:Disable()
+    end
 end
 
 ---Takes a string and splits it into words
