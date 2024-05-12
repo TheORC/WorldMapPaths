@@ -18,8 +18,12 @@ end
 
 ---Clears the current draw map and redraws it
 function WMP_Debug_Render:Clear()
-  WMP_Renderer.Clear(self)
+  WMP_MESSENGER:Debug("WMP_Debug_Render:Clear() Clearing renderer")
+
   LMP:RemoveCustomPin(PIN_TYPE)
+  WMP_Renderer.Clear(self)
+
+  WMP_MESSENGER:Debug("WMP_Debug_Render:Clear() Finished clearing")
 end
 
 ---Draws the current map information
@@ -28,36 +32,33 @@ function WMP_Debug_Render:Draw()
   self:Clear()
 
   if not self.m_map then
-    d('No map no render')
+    WMP_MESSENGER:Warn("WMP_Debug_Render:Draw() The render must have a map set to draw the paths")
     return
   end
 
   if WMP_STORAGE:GetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_POINT) then
+    WMP_MESSENGER:Warn("WMP_Debug_Render:Draw() Drawing map points")
     self:DrawPoints()
   end
 
   if WMP_STORAGE:GetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_PATH) then
+    WMP_MESSENGER:Warn("WMP_Debug_Render:Draw() Drawing map paths")
     self:DrawPath()
   end
 end
 
 ---Draws all the points on the current map
 function WMP_Debug_Render:DrawPoints()
-  local call_later = function()
-    -- All the nodes on the map
-    local nodes = self.m_map:GetNodes()
+  -- All the nodes on the map
+  local nodes = self.m_map:GetNodes()
 
-    for _, node in ipairs(nodes) do
-      local nodePos = node:GetLocalPosition()
+  for _, node in ipairs(nodes) do
+    local nodePos = node:GetLocalPosition()
 
-      LMP:CreatePin(PIN_TYPE, {
-        node_id = node:GetId(),
-      }, nodePos.x, nodePos.y, nil)
-    end
+    LMP:CreatePin(PIN_TYPE, {
+      node_id = node:GetId(),
+    }, nodePos.x, nodePos.y, nil)
   end
-
-  -- Wait so the map is loaded
-  zo_callLater(call_later, 10)
 end
 
 ---Draw the entire map
@@ -89,6 +90,7 @@ end
 ---Sets the map the be rendered
 ---@param map any
 function WMP_Debug_Render:SetMap(map)
+  WMP_MESSENGER:Debug("SetMap() Debug renderer map set")
   self.m_map = map
 end
 
@@ -110,7 +112,6 @@ do
         callback = function(pin)
           local _, pinData = pin:GetPinTypeAndTag()
           WMP_DebugUI_SetCopytext(pinData.node_id)
-          WMP_WorldUI_SetCopytext(pinData.node_id)
         end
       }
     }, nil)

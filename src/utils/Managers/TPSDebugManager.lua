@@ -57,7 +57,9 @@ function WMP_TPSDebugManager:LoadMap(zoneId)
     return
   end
 
+  WMP_MAP_MAKER:SetMap(self.m_map)
   self.m_renderer:SetMap(self.m_map)
+
   self:Drawpath()
 end
 

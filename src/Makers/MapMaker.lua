@@ -1,69 +1,15 @@
 local GPS = LibGPS3
 
----Helper function for getting the players current zone
----@return integer
-local function getPlayerZone()
-  local zoneId, _, _, _ = GetUnitWorldPosition("player")
-  ---@diagnostic disable-next-line: return-type-mismatch
-  return zoneId
-end
-
----Method for checking whether the player is in the same zone as the MapMaker is working on.
----@return boolean
-local function isPlayerInSameZone(zoneId)
-  return zoneId == getPlayerZone()
-end
-
----Creates a new vector at the players current map position
----@return WMP_Vector
-local function newVectorAtPosition()
-  -- Always set the map to the player location
-  SetMapToPlayerLocation()
-
-  local x, y = GetMapPlayerPosition("player")
-  local gX, gY = GPS:LocalToGlobal(x, y)
-
-  return WMP_Vector:New(gX, gY)
-end
-
 ---Helper class for creating map path nodes.
 ---@class WMP_MapMaker
----@field private map WMP_Zone -- The current map being worked on
+---@field private map WMP_Map -- The current map being worked on
 ---@field private previousNode integer -- The previous placed node.
 local WMP_MapMaker = ZO_InitializingObject:Subclass()
 
 ---Initializes the map maker class
 function WMP_MapMaker:Initialize()
-  self.map = nil
-  self.previousNode = nil
-end
-
----Setup variables to start listening for updates in this zone.
----
----Checks to see if there is already information for this zone.  If there is, load this information
----and start listening for node updates.
-function WMP_MapMaker:Start()
-  -- Make sure it's not already running
-  if self.map ~= nil then
-    d('Warning: map has already been made.')
-    return
-  end
-
-  if WMP_STORAGE:GetMap(getPlayerZone()) then
-    d('Existing map found, loading it: ' .. getPlayerZone())
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    self.map = WMP_STORAGE:GetMap(getPlayerZone())
-  else
-    d('Map maker running for zone: ' .. getPlayerZone())
-    self.map = WMP_Zone:New(getPlayerZone())
-  end
-end
-
----Resets the map maker for another round
-function WMP_MapMaker:Reset()
-  self.map = nil
-  self.previousNode = nil
-  self:OnUpdate()
+  self.m_map = nil
+  self.m_previousNode = nil
 end
 
 ---Adds a new zone to the zone map. If `connect_previous` is set to true, the new node will be set
@@ -71,34 +17,44 @@ end
 ---@param connect_previous boolean whether the new node is a neighbour of the previous node
 function WMP_MapMaker:AddNode(connect_previous)
   -- Check to make sure we are making a map
-  if self.map == nil then
-    d('You must start make a map!')
+  if self.m_map == nil then
+    WMP_MESSENGER:Warn("WMP_MapMaker:AddNode() Attempting to add a node when no map has been set")
     return
   end
 
-  -- Check the player is in the same zone as the map
-  if isPlayerInSameZone(self.map:GetZoneId()) == false then
-    d('You are not in the same zone!')
+  -- The player must be in the zone they are trying to add a node too
+  if self.m_map:GetZoneId() ~= 0 and not WMP_IsPlayerInCurrentZone() then
+    WMP_MESSENGER:Warn("WMP_MapMaker:AddNode() ttempting to add a node to a zone you are not currently in")
     return
   end
 
-  local position = newVectorAtPosition()
-  local nodeId, node = self.map:CreateNode(position)
+  local position = WMP_GetPlayerGlobalPos()
+  local zoneId = WMP_GetPlayerZoneId()
+
+  local nodeId, node
+  if self.m_map:GetZoneId() == 0 then
+    WMP_MESSENGER:Debug("WMP_MapMaker:AddNode() Adding node to world map.")
+    nodeId, node = self.m_map:CreateNode(zoneId, position)
+  else
+    WMP_MESSENGER:Debug("WMP_MapMaker:AddNode() Adding node to zone map.")
+    nodeId, node = self.m_map:CreateNode(position)
+  end
 
   if nodeId == nil or node == nil then
-    d('Failed to add a node')
+    WMP_MESSENGER:Error("WMP_MapMaker:AddNode() Add node failed to create a node.")
     return
   end
 
-  d('Added a new node (' .. tostring(node) .. ')')
+  WMP_MESSENGER:Message("WMP_MapMaker:AddNode() Added a new node: <<1>>", node)
 
   -- Check to see if this should be connected to the previouslt placed node
-  if connect_previous and self.previousNode ~= nil then
-    self:AddConnection(nodeId, self.previousNode)
+  -- We don't do this for the world map
+  if connect_previous and self.m_previousNode ~= nil and self.m_map:GetZoneId() ~= 0 then
+    WMP_MESSENGER:Debug("AddNode() Connect to last placed node <<1>>", self.m_previousNode)
+    self:AddConnection(nodeId, self.m_previousNode)
   end
 
-  self.previousNode = nodeId
-
+  self.m_previousNode = nodeId
   self:OnUpdate()
 end
 
@@ -106,18 +62,19 @@ end
 ---@param nodeId number
 function WMP_MapMaker:RemoveNode(nodeId)
   -- Check to make sure we are making a map
-  if self.map == nil then
-    d('You must start make a map!')
+  if self.m_map == nil then
+    WMP_MESSENGER:Warn("WMP_MapMaker:RemoveNode() Attempting to remove a node when no map has been set")
     return
   end
 
-  self.map:RemoveNode(nodeId)
+  WMP_MESSENGER:Debug("WMP_MapMaker:RemoveNode() Removing node from map.")
+  self.m_map:RemoveNode(nodeId)
 
-  if self.previousNode == nodeId then
-    self.previousNode = nil
+  if self.m_previousNode == nodeId then
+    self.m_previousNode = nil
   end
 
-  d('Removed node (' .. nodeId .. ')')
+  WMP_MESSENGER:Message("WMP_MapMaker:RemoveNode() Removed node <<1>> from map.", nodeId)
   self:OnUpdate()
 end
 
@@ -126,14 +83,25 @@ end
 ---@param nodeIdB number
 function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB)
   -- Check to make sure we are making a map
-  if self.map == nil then
-    d('You must start make a map!')
+  if self.m_map == nil then
+    WMP_MESSENGER:Warn("WMP_MapMaker:AddConnection() Attempting to add a connection when no map has been set")
     return
   end
 
-  self.map:AddConnection(nodeIdA, nodeIdB)
-  d('Added connection between ' .. nodeIdA .. ' and ' .. nodeIdB)
+  if nodeIdA == nodeIdB then
+    WMP_MESSENGER:Warn("WMP_MapMaker:AddConnection() Attempting to add a node to itself")
+    return
+  end
 
+  WMP_MESSENGER:Debug("WMP_MapMaker:AddConnection() Adding connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
+  local success = self.m_map:AddConnection(nodeIdA, nodeIdB)
+
+  if not success then
+    WMP_MESSENGER:Error("WMP_MapMaker:AddConnection() Failed to create connection between nodes")
+    return
+  end
+
+  WMP_MESSENGER:Message("WMP_MapMaker:AddConnection() Added connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
   self:OnUpdate()
 end
 
@@ -142,57 +110,56 @@ end
 ---@param nodeIdB number
 function WMP_MapMaker:RemoveConnection(nodeIdA, nodeIdB)
   -- Check to make sure we are making a map
-  if self.map == nil then
-    d('You must start make a map!')
+  if self.m_map == nil then
+    WMP_MESSENGER:Warn("WMP_MapMaker:RemoveConnection() Attempting to remove a connection when no map has been set")
     return
   end
 
-  self.map:RemoveConnection(nodeIdA, nodeIdB)
-  d('Removed connection between ' .. nodeIdA .. ' and ' .. nodeIdB)
+  if nodeIdA == nodeIdB then
+    WMP_MESSENGER:Warn("WMP_MapMaker:RemoveConnection() Attempting to remove a node from itself")
+    return
+  end
 
+  WMP_MESSENGER:Debug("WMP_MapMaker:RemoveConnection() Removing connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
+  local success = self.m_map:RemoveConnection(nodeIdA, nodeIdB)
+
+  if not success then
+    WMP_MESSENGER:Error("WMP_MapMaker:RemoveConnection() Failed to remove connection between nodes")
+    return
+  end
+
+  WMP_MESSENGER:Message("WMP_MapMaker:RemoveConnection() Removed connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
   self:OnUpdate()
 end
 
 ---Saves the current map to the storage
 function WMP_MapMaker:Save()
-  if self.map == nil then
-    d("There is no map data to be saved")
+  if self.m_map == nil then
+    WMP_MESSENGER:Warn("WMP_MapMaker:Save() Attempting to save a map when none has been set")
     return
   end
 
-  -- Store the map
-  WMP_STORAGE:StoreMap(self.map)
-  d("Map saved.")
+  WMP_MESSENGER:Debug("WMP_MapMaker:Save() Attempting to save a map")
+  WMP_STORAGE:StoreMap(self.m_map)
+
+  WMP_MESSENGER:Message("WMP_MapMaker:Save() map <<1>> saved", self.m_map:GetZoneId())
 end
 
----Lodas the current zone map from storage
-function WMP_MapMaker:Load()
-  self:Reset()
-  local map = WMP_STORAGE:GetMap(getPlayerZone())
-
-  if map == nil then
-    d("No map data found for this zone.")
-    return
-  end
-
-  -- Set the map
-  ---@diagnostic disable-next-line: assign-type-mismatch
-  self.map = map
-  d("Map loaded.")
-end
-
----Returns the map.
----@return WMP_Zone|nil
-function WMP_MapMaker:GetMap()
-  return self.map
+---Sets the map to update for the map maker
+---@param map WMP_Map
+function WMP_MapMaker:SetMap(map)
+  WMP_MESSENGER:Debug("SetMap() Map maker map set")
+  self.m_map = map
+  self.m_previousNode = nil
 end
 
 do
   function WMP_MapMaker:OnUpdate()
-    WMP_DEBUG_RENDERER:Draw()
+    d('Drawing')
+    WMP_TPS_DEBUG_MANAGER:Drawpath()
   end
 end
 
 ---@type WMP_MapMaker
 ---@diagnostic disable-next-line: undefined-field
-WMP_MapMaker = WMP_MapMaker:New()
+WMP_MAP_MAKER = WMP_MapMaker:New()

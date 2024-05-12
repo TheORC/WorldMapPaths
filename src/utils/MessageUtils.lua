@@ -3,7 +3,7 @@ local MessageModes = {
   MESSAGE = "808000",
   DEBUG = "808080",
   WARN = "FFAA33",
-  ERROR = "FF000"
+  ERROR = "FF0000"
 }
 
 ---Sends a message bassed on the mode.

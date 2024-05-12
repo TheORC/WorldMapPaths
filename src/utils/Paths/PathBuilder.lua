@@ -69,6 +69,7 @@ end
 ---Adds a connection between two nodes.
 ---@param nodeA integer
 ---@param nodeB integer
+---@return boolean
 function WMP_PathBuilder:AddConnection(nodeA, nodeB)
   assert(nodeA ~= nil, 'NodeA must be defined')
   assert(nodeB ~= nil, 'NodeB must be defined')
@@ -76,16 +77,18 @@ function WMP_PathBuilder:AddConnection(nodeA, nodeB)
   local a, b = self:GetNode(nodeA), self:GetNode(nodeB)
 
   if a == nil or b == nil then
-    return
+    return false
   end
 
   a:AddNeighbour(b)
   b:AddNeighbour(a)
+  return true
 end
 
 ---Removes the connection between two nodes.
 ---@param nodeA integer
 ---@param nodeB integer
+---@return boolean
 function WMP_PathBuilder:RemoveConnection(nodeA, nodeB)
   assert(nodeA ~= nil, 'NodeA must be defined')
   assert(nodeB ~= nil, 'NodeB must be defined')
@@ -93,11 +96,12 @@ function WMP_PathBuilder:RemoveConnection(nodeA, nodeB)
   local a, b = self:GetNode(nodeA), self:GetNode(nodeB)
 
   if a == nil or b == nil then
-    return
+    return false
   end
 
   a:RemoveNeighbour(b)
   b:RemoveNeighbour(a)
+  return true
 end
 
 ---Returns the node with the shortest distance to the position
