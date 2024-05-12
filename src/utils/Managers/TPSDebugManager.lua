@@ -49,11 +49,11 @@ function WMP_TPSDebugManager:Drawpath()
 end
 
 function WMP_TPSDebugManager:LoadMap(zoneId)
-  WMP_MESSENGER:Debug("OnMapChanged() Loading map <<1>>.", zoneId)
+  WMP_MESSENGER:Debug("WMP_TPSDebugManager:LoadMap() Loading map <<1>>.", zoneId)
   self.m_map = WMP_GetZoneMap(zoneId)
 
   if not self.m_map then
-    WMP_MESSENGER:Debug("OnMapChanged() Map load failed.")
+    WMP_MESSENGER:Debug("WMP_TPSDebugManager:LoadMap() Map load failed.")
     return
   end
 

@@ -148,7 +148,7 @@ end
 ---Sets the map to update for the map maker
 ---@param map WMP_Map
 function WMP_MapMaker:SetMap(map)
-  WMP_MESSENGER:Debug("SetMap() Map maker map set")
+  WMP_MESSENGER:Debug("WMP_MapMaker:SetMap() Map maker map set")
   self.m_map = map
   self.m_previousNode = nil
 end

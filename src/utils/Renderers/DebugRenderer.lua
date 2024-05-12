@@ -37,12 +37,12 @@ function WMP_Debug_Render:Draw()
   end
 
   if WMP_STORAGE:GetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_POINT) then
-    WMP_MESSENGER:Warn("WMP_Debug_Render:Draw() Drawing map points")
+    WMP_MESSENGER:Debug("WMP_Debug_Render:Draw() Drawing map points")
     self:DrawPoints()
   end
 
   if WMP_STORAGE:GetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_PATH) then
-    WMP_MESSENGER:Warn("WMP_Debug_Render:Draw() Drawing map paths")
+    WMP_MESSENGER:Debug("WMP_Debug_Render:Draw() Drawing map paths")
     self:DrawPath()
   end
 end
@@ -90,7 +90,7 @@ end
 ---Sets the map the be rendered
 ---@param map any
 function WMP_Debug_Render:SetMap(map)
-  WMP_MESSENGER:Debug("SetMap() Debug renderer map set")
+  WMP_MESSENGER:Debug("WMP_Debug_Render:SetMap() Debug renderer map set")
   self.m_map = map
 end
 

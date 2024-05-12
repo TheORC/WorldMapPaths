@@ -14,16 +14,12 @@ end
 function WMP_Debug_Menu:Initialize(control)
   self.m_control = control
   self.m_edit = control:GetNamedChild("EditCopyBox")
-
   self.m_connectLast = control:GetNamedChild("AddRegionConnectLast")
   self.m_removeEdit = control:GetNamedChild("RemoveRegionRemoveEditEdit")
-
   self.m_connectAEdit = control:GetNamedChild("ConnectRegionNode1Edit")
   self.m_connectBEdit = control:GetNamedChild("ConnectRegionNode2Edit")
-
   self.m_disconnectAEdit = control:GetNamedChild("DisconnectRegionNode1Edit")
   self.m_disconnectBEdit = control:GetNamedChild("DisconnectRegionNode2Edit")
-
   self.m_saveButtonText = control:GetNamedChild("SaveLabel")
 end
 
@@ -35,6 +31,8 @@ end
 
 ---Method called to add a new node to the map
 function WMP_Debug_Menu:AddNode()
+  WMP_MESSENGER:Debug("MapUI:AddNode() Adding node")
+
   local connectLast = ZO_CheckButton_IsChecked(self.m_connectLast)
   WMP_MAP_MAKER:AddNode(connectLast)
   self:OnMapUpdate()
@@ -42,10 +40,12 @@ end
 
 ---Method called to remove a node from the map
 function WMP_Debug_Menu:RemoveNode()
+  WMP_MESSENGER:Debug("MapUI:RemoveNode() Removing node")
+
   local nodeId = tonumber(self.m_removeEdit:GetText())
 
-  if not nodeId then
-    d("Make sure you provide a numeric node id.")
+  if not nodeId or type(nodeId) ~= "number" then
+    WMP_MESSENGER:Warn("MapUI:RemoveNode() The node id must be an integer")
     return
   end
 
@@ -55,10 +55,12 @@ end
 
 ---Method called to connect two nodes on the map
 function WMP_Debug_Menu:ConnectNodes()
+  WMP_MESSENGER:Debug("MapUI:ConnectNodes() Connecting two nodes")
+
   local nodeAId, nodeBId = tonumber(self.m_connectAEdit:GetText()), tonumber(self.m_connectBEdit:GetText())
 
-  if not nodeAId or not nodeBId then
-    d("Make sure you provide two numeric node ids.")
+  if not nodeAId or not nodeBId or type(nodeAId) ~= "number" or type(nodeAId) ~= "number" then
+    WMP_MESSENGER:Warn("MapUI:ConnectNodes() Both node ids need to be integers")
     return
   end
 
@@ -68,10 +70,12 @@ end
 
 ---Method called to disconnect two nodes on the map
 function WMP_Debug_Menu:DisconnectNodes()
+  WMP_MESSENGER:Debug("MapUI:DisconnectNodes() Disconnecting two nodes")
+
   local nodeAId, nodeBId = tonumber(self.m_disconnectAEdit:GetText()), tonumber(self.m_disconnectBEdit:GetText())
 
-  if not nodeAId or not nodeBId then
-    d("Make sure you provide two numeric node ids.")
+  if not nodeAId or not nodeBId or type(nodeAId) ~= "number" or type(nodeAId) ~= "number" then
+    WMP_MESSENGER:Warn("MapUI:ConnectNodes() Both node ids need to be integers")
     return
   end
 
@@ -157,11 +161,13 @@ end
 
 ---Method called to connect to nodes on the map
 function WMP_DebugUI_Save()
+  WMP_MESSENGER:Debug("WMP_DebugUI_Save() Saving map")
   WMP_MAP_MAKER:Save()
   WMP_DebugMap_UI.m_object:OnMapSave()
 end
 
 ---Method called to connect to nodes on the map
 function WMP_DebugUI_Load()
+  WMP_MESSENGER:Debug("WMP_DebugUI_Load() Loading current active map: <<1>>", WMP_GetActiveMapZoneId())
   WMP_TPS_DEBUG_MANAGER:LoadMap(WMP_GetActiveMapZoneId())
 end
