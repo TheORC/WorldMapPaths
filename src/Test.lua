@@ -22,10 +22,10 @@ function WMP_Print(nodes)
     end
 
     for _, node in ipairs(nodes) do
-      d(node:toString())
+      d(tostring(node))
     end
   else
-    d(nodes:toString())
+    d(tostring(nodes))
   end
 end
 

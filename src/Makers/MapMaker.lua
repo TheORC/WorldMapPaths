@@ -89,7 +89,7 @@ function WMP_Map_Maker:AddNode(connect_previous)
     return
   end
 
-  d('Added a new node (' .. node:toString() .. ')')
+  d('Added a new node (' .. tostring(node) .. ')')
 
   -- Check to see if this should be connected to the previouslt placed node
   if connect_previous and self.previousNode ~= nil then

@@ -73,8 +73,7 @@ end
 ---Method called to draw the path on the map
 ---@param target WMP_Vector
 function WMP_TPSManager:DrawPath(target)
-  d(target)
-  WMP_MESSENGER:Debug("DrawPath() <<1>>", target)
+  WMP_MESSENGER:Debug("DrawPath() Target location <<1>>", target)
 
   if not self.m_map or not target then
     WMP_MESSENGER:Debug("DrawPath() No map or not target.")
@@ -83,7 +82,6 @@ function WMP_TPSManager:DrawPath(target)
 
   local zoneId = WMP_GetPlayerZoneId()
   local startPos = WMP_GetPlayerLocalPos()
-  ---@diagnostic disable-next-line: undefined-field
   local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
 
   local pathStart = self.m_map:GetClosestNode(startPos)
@@ -93,6 +91,8 @@ function WMP_TPSManager:DrawPath(target)
     WMP_MESSENGER:Debug("DrawPath() No path start or path end.")
     return
   end
+
+  WMP_MESSENGER:Debug("DrawPath() Path start: <<1>> Path end: <<2>>", pathStart, pathEnd)
 
   ---@diagnostic disable-next-line: undefined-field
   local path = WMP_ZonePath:New(zoneId, pathStart, pathEnd)

@@ -18,10 +18,10 @@ end
 ---@param y number
 ---@return WMP_Vector
 function WMP_Vector:New(x, y)
-  local object = setmetatable({}, self)
-  self.__index = self
-  self.x = x or 0
-  self.y = y or 0
+  local object = setmetatable({}, WMP_Vector)
+  object.__index = WMP_Vector
+  object.x = x or 0
+  object.y = y or 0
   return object
 end
 
@@ -90,5 +90,5 @@ end
 ---@param self WMP_Vector
 ---@return string
 function WMP_Vector.__tostring(self)
-  return "(" .. self.x .. ", " .. self.y .. ")"
+  return "Vector (" .. self.x .. ", " .. self.y .. ")"
 end

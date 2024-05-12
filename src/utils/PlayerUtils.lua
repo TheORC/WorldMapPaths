@@ -46,7 +46,7 @@ end
 function WMP_GetPlayerLocalPos()
   local x, y = GetMapPlayerPosition("player")
 
-  ---@diagnostic disable-next-line: undefined-field
+  ---@diagnostic disable-next-line: param-type-mismatch
   return WMP_Vector:New(x, y)
 end
 
@@ -56,6 +56,5 @@ function WMP_GetPlayerGlobalPos()
   local position = WMP_GetPlayerLocalPos()
   local x, y = GPS:LocalToGlobal(position.x, position.y)
 
-  ---@diagnostic disable-next-line: undefined-field
   return WMP_Vector:New(x, y)
 end

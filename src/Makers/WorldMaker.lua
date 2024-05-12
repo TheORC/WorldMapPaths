@@ -18,7 +18,7 @@ function WMP_WorldMaker:AddNode()
   local playerZoneId = WMP_GetPlayerZoneId()
   local playerPos = WMP_GetPlayerGlobalPos()
   local _, node = self.world:CreateNode(playerZoneId, playerPos)
-  d(zo_strformat('Added a new node (<<1>>)', node:toString()))
+  d(zo_strformat('Added a new node (<<1>>)', tostring(node)))
 
   self:OnUpdate()
 end
