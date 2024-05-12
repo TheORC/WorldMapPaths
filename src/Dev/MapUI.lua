@@ -163,5 +163,5 @@ end
 
 ---Method called to connect to nodes on the map
 function WMP_DebugUI_Load()
-  WMP_MAP_MAKER:Load()
+  WMP_TPS_DEBUG_MANAGER:LoadMap(WMP_GetActiveMapZoneId())
 end

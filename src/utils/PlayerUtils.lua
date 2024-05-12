@@ -58,3 +58,22 @@ function WMP_GetPlayerGlobalPos()
 
   return WMP_Vector:New(x, y)
 end
+
+---Gets a zone's map from it's zone id
+---@param zoneId integer
+---@return WMP_Map|nil
+function WMP_GetZoneMap(zoneId)
+  WMP_MESSENGER:Debug("Loading zone <<1>> from storage", zoneId)
+
+  -- Get the map from storage
+  -- TODO: change this to memory for performance
+  local map = WMP_STORAGE:GetMap(zoneId)
+
+  if map then
+    WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> loaded from storage", zoneId)
+    return map
+  end
+
+  WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> not in storage", zoneId)
+  return nil
+end

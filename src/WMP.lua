@@ -71,7 +71,9 @@ local function OnAddonLoad(_, name)
 
     -- Load our storage
     WMP_STORAGE:LoadData()
-    WMP_TPS_MANAGER:Enable()
+
+    WMP_SetMakeMode(true)
+    WMP_SetDebugMode(true)
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)

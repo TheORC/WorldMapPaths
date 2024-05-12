@@ -5,7 +5,7 @@ local GPS = LibGPS3
 ---Class responsible for the rendering of paths on the world map
 ---@class WMP_TPSManager : TPS_PathManager
 ---@field private m_renderer WMP_Renderer
----@field private m_map WMP_Map
+---@field private m_map WMP_Map|nil
 ---@field private m_playerTarget WMP_Vector
 ---@diagnostic disable-next-line: undefined-field
 local WMP_TPSManager = TPS_PathManager:Subclass()
@@ -62,7 +62,7 @@ function WMP_TPSManager:OnMapChanged()
   end
 
   -- Load the current map
-  self:LoadZone(WMP_GetActiveMapZoneId())
+  self.m_map = WMP_GetZoneMap(WMP_GetActiveMapZoneId())
 
   -- We have a target draw it
   if self.m_playerTarget then
@@ -105,31 +105,10 @@ do
   ---Calculates a path between zones based on their provided id.
   ---@param startId integer
   ---@param endId integer
-  ---@return WMP_Path
+  ---@return WMP_Path|nil
   function WMP_TPSManager:CalculateZonePath(startId, endId)
     WMP_MESSENGER:Debug("Calculating a zone path between <<1>> and <<2>>", startId, endId)
     return nil
-  end
-
-  ---Load the zone with the specified id.
-  ---@param zoneId integer
-  function WMP_TPSManager:LoadZone(zoneId)
-    WMP_MESSENGER:Debug("Loading zone <<1>> from storage", zoneId)
-
-    -- Don't load the map if it's already loaded
-    if self.m_map and self.m_map:GetZoneId() == zoneId then
-      WMP_MESSENGER:Debug("LoadZone() zone id is <<1>> is already loaded", zoneId)
-      return
-    end
-
-    local map = WMP_STORAGE:GetMap(zoneId)
-
-    if map then
-      WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> loaded from storage", zoneId)
-      self.m_map = map
-    else
-      WMP_MESSENGER:Debug("LoadZone() zone with id <<1>> not in storage", zoneId)
-    end
   end
 end
 

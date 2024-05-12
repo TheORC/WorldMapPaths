@@ -5,14 +5,15 @@ local PIN_TYPE = "WMP_Marker"
 
 ---Class for creating a debug renderer
 ---@class WMP_Debug_Render : WMP_Renderer
+---@field m_map WMP_Map
 ---@diagnostic disable-next-line: undefined-field
 local WMP_Debug_Render = WMP_Renderer:Subclass()
 
 ---Initializes a new renderer
 function WMP_Debug_Render:Initialize()
   WMP_Renderer.Initialize(self, 'Debug')
-
   self:CreatePinType()
+  self.m_map = nil
 end
 
 ---Clears the current draw map and redraws it
@@ -26,7 +27,7 @@ function WMP_Debug_Render:Draw()
   -- Clear the old render
   self:Clear()
 
-  if not WMP_TPS_MANAGER:GetMap() then
+  if not self.m_map then
     d('No map no render')
     return
   end
@@ -44,7 +45,7 @@ end
 function WMP_Debug_Render:DrawPoints()
   local call_later = function()
     -- All the nodes on the map
-    local nodes = WMP_TPS_MANAGER:GetMap():GetNodes()
+    local nodes = self.m_map:GetNodes()
 
     for _, node in ipairs(nodes) do
       local nodePos = node:GetLocalPosition()
@@ -85,6 +86,12 @@ function WMP_Debug_Render:DrawPath()
   end
 end
 
+---Sets the map the be rendered
+---@param map any
+function WMP_Debug_Render:SetMap(map)
+  self.m_map = map
+end
+
 do
   ---Create the map pin type allowing us to see where our nodes are placed
   function WMP_Debug_Render:CreatePinType()
@@ -117,7 +124,7 @@ do
     local path = WMP_Path:New()
 
     -- Get a path between all the nodes
-    for _, node in ipairs(WMP_TPS_MANAGER:GetMap():GetNodes()) do
+    for _, node in ipairs(self.m_map:GetNodes()) do
       for _, neighbour in ipairs(node:GetNeighbours()) do
         ---@diagnostic disable-next-line: undefined-field
         path:AddLine(WMP_Line:New(node:GetLocalPosition(), neighbour:GetLocalPosition()))
