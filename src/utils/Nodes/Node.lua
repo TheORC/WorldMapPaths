@@ -89,12 +89,6 @@ end
 
 ---String representation of a node
 ---@return string
-function WMP_Node:toString()
-  local neighbours = ""
-  for _, neighbour in ipairs(self:GetNeighbours()) do
-    neighbours = neighbour:GetId() .. ", " .. neighbours
-  end
-
-  return "Node (id: " ..
-      self.m_id .. " x: " .. self.m_position.x .. " y: " .. self.m_position.y .. ") (" .. neighbours .. ")"
+function WMP_Node.__tostring(self)
+  return "Node (id: " .. self.m_id .. " position: " .. tostring(self.m_position) .. ")"
 end

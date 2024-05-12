@@ -27,12 +27,13 @@ local function newVectorAtPosition()
 end
 
 ---Helper class for creating map path nodes.
----@class WMP_Map_Maker
+---@class WMP_MapMaker
 ---@field private map WMP_Zone -- The current map being worked on
 ---@field private previousNode integer -- The previous placed node.
-local WMP_Map_Maker = ZO_InitializingObject:Subclass()
+local WMP_MapMaker = ZO_InitializingObject:Subclass()
 
-function WMP_Map_Maker:Initialize()
+---Initializes the map maker class
+function WMP_MapMaker:Initialize()
   self.map = nil
   self.previousNode = nil
 end
@@ -41,7 +42,7 @@ end
 ---
 ---Checks to see if there is already information for this zone.  If there is, load this information
 ---and start listening for node updates.
-function WMP_Map_Maker:Start()
+function WMP_MapMaker:Start()
   -- Make sure it's not already running
   if self.map ~= nil then
     d('Warning: map has already been made.')
@@ -59,7 +60,7 @@ function WMP_Map_Maker:Start()
 end
 
 ---Resets the map maker for another round
-function WMP_Map_Maker:Reset()
+function WMP_MapMaker:Reset()
   self.map = nil
   self.previousNode = nil
   self:OnUpdate()
@@ -68,7 +69,7 @@ end
 ---Adds a new zone to the zone map. If `connect_previous` is set to true, the new node will be set
 ---as a neighbour.
 ---@param connect_previous boolean whether the new node is a neighbour of the previous node
-function WMP_Map_Maker:AddNode(connect_previous)
+function WMP_MapMaker:AddNode(connect_previous)
   -- Check to make sure we are making a map
   if self.map == nil then
     d('You must start make a map!')
@@ -103,7 +104,7 @@ end
 
 ---Removes a node with the specified node from the current map
 ---@param nodeId number
-function WMP_Map_Maker:RemoveNode(nodeId)
+function WMP_MapMaker:RemoveNode(nodeId)
   -- Check to make sure we are making a map
   if self.map == nil then
     d('You must start make a map!')
@@ -123,7 +124,7 @@ end
 ---Adds a connection between two nodes
 ---@param nodeIdA number
 ---@param nodeIdB number
-function WMP_Map_Maker:AddConnection(nodeIdA, nodeIdB)
+function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB)
   -- Check to make sure we are making a map
   if self.map == nil then
     d('You must start make a map!')
@@ -139,7 +140,7 @@ end
 ---Removes a connection between two nodes
 ---@param nodeIdA number
 ---@param nodeIdB number
-function WMP_Map_Maker:RemoveConnection(nodeIdA, nodeIdB)
+function WMP_MapMaker:RemoveConnection(nodeIdA, nodeIdB)
   -- Check to make sure we are making a map
   if self.map == nil then
     d('You must start make a map!')
@@ -153,7 +154,7 @@ function WMP_Map_Maker:RemoveConnection(nodeIdA, nodeIdB)
 end
 
 ---Saves the current map to the storage
-function WMP_Map_Maker:Save()
+function WMP_MapMaker:Save()
   if self.map == nil then
     d("There is no map data to be saved")
     return
@@ -165,7 +166,7 @@ function WMP_Map_Maker:Save()
 end
 
 ---Lodas the current zone map from storage
-function WMP_Map_Maker:Load()
+function WMP_MapMaker:Load()
   self:Reset()
   local map = WMP_STORAGE:GetMap(getPlayerZone())
 
@@ -182,16 +183,16 @@ end
 
 ---Returns the map.
 ---@return WMP_Zone|nil
-function WMP_Map_Maker:GetMap()
+function WMP_MapMaker:GetMap()
   return self.map
 end
 
 do
-  function WMP_Map_Maker:OnUpdate()
+  function WMP_MapMaker:OnUpdate()
     WMP_DEBUG_RENDERER:Draw()
   end
 end
 
----@type WMP_Map_Maker
+---@type WMP_MapMaker
 ---@diagnostic disable-next-line: undefined-field
-WMP_MAP_MAKER = WMP_Map_Maker:New()
+WMP_MapMaker = WMP_MapMaker:New()
