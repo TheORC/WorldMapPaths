@@ -75,7 +75,7 @@ function WMP_Debug_Menu:DisconnectNodes()
   local nodeAId, nodeBId = tonumber(self.m_disconnectAEdit:GetText()), tonumber(self.m_disconnectBEdit:GetText())
 
   if not nodeAId or not nodeBId or type(nodeAId) ~= "number" or type(nodeAId) ~= "number" then
-    WMP_MESSENGER:Warn("MapUI:ConnectNodes() Both node ids need to be integers")
+    WMP_MESSENGER:Warn("MapUI:DisconnectNodes() Both node ids need to be integers")
     return
   end
 

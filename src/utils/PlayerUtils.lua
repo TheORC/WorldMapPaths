@@ -59,6 +59,24 @@ function WMP_GetPlayerGlobalPos()
   return WMP_Vector:New(x, y)
 end
 
+---Converts a local x y position in a global x y position
+---@param x number
+---@param y number
+---@return number x
+---@return number y
+function WMP_LocalToGlobal(x, y)
+  return GPS:LocalToGlobal(x, y)
+end
+
+---Converts a global x y position in a local x y position
+---@param x number
+---@param y number
+---@return number x
+---@return number y
+function WMP_GlobalToLocal(x, y)
+  return GPS:GlobalToLocal(x, y)
+end
+
 ---Gets a zone's map from it's zone id
 ---@param zoneId integer
 ---@return WMP_Map|nil

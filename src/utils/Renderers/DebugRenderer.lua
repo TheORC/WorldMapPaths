@@ -32,7 +32,7 @@ function WMP_Debug_Render:Draw()
   self:Clear()
 
   if not self.m_map then
-    WMP_MESSENGER:Warn("WMP_Debug_Render:Draw() The render must have a map set to draw the paths")
+    WMP_MESSENGER:Debug("WMP_Debug_Render:Draw() The render must have a map set to draw the paths")
     return
   end
 

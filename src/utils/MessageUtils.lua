@@ -12,7 +12,7 @@ local MessageModes = {
 ---@param ... any
 local function WMP_Message(mode, message, ...)
   -- We don't display this mesasge
-  if mode ~= MessageModes.MESSAGE and not WMP_InDebugMode() then
+  if mode == MessageModes.DEBUG and not WMP_InDebugMode() then
     return
   end
 
