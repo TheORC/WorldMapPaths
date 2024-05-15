@@ -22,6 +22,7 @@ end
 ---@param mode boolean
 function WMP_SetMakeMode(mode)
     IS_MAKE = mode
+    WMP_DebugMap_UI:SetHidden(not IS_MAKE)
 
     if IS_MAKE then
         WMP_TPS_MANAGER:Disable()
@@ -71,9 +72,10 @@ local function OnAddonLoad(_, name)
 
     -- Load our storage
     WMP_STORAGE:LoadData()
+    WMP_TPS_MANAGER:LateInitialize()
 
-    WMP_SetMakeMode(true)
-    WMP_SetDebugMode(false)
+    WMP_SetMakeMode(false)
+    WMP_SetDebugMode(true)
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)

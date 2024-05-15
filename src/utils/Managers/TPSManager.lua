@@ -14,8 +14,15 @@ local WMP_TPSManager = TPS_PathManager:Subclass()
 function WMP_TPSManager:Initialize()
   TPS_PathManager.Initialize(self, WMP_PATH_RENDERER)
 
-  self.m_map = nil
+  self.m_zone = nil
   self.m_playerTarget = nil
+  self.m_worldPath = nil
+end
+
+---Create a normal TPS path manager
+function WMP_TPSManager:LateInitialize()
+  ---@type WMP_World
+  self.m_world = WMP_GetZoneMap(0)
 end
 
 ---Method called everytime a ping is added to the map
@@ -28,8 +35,17 @@ function WMP_TPSManager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
   WMP_MESSENGER:Debug("OnPingAdded() Type: <<1>> Tag: <<2>> X: <<3>> Y: <<4>> Owner: <<4>>", pingType, pingTag, x, y,
     isPingOwner)
 
+  -- Store the player destination
   self.m_playerTarget = WMP_Vector:New(GPS:LocalToGlobal(x, y))
-  self:DrawPath(self.m_playerTarget)
+  self.m_playerPosition = WMP_GetPlayerGlobalPos()
+
+  WMP_MESSENGER:Debug("Target zone: <<1>>", WMP_GetZoneIdFromGlobalVector(self.m_playerTarget))
+
+  -- Calculate a world path
+  self.m_worldPath = self:CalculateWorldPath(self.m_playerPosition, self.m_playerTarget)
+
+  -- Draw
+  self:DrawPath()
 end
 
 ---Method called everytime a ping is removed from the map
@@ -55,60 +71,88 @@ function WMP_TPSManager:OnMapChanged()
   WMP_MESSENGER:Debug("OnMapChanged() Type: <<1>>", mapType)
 
   -- Not a map we draw yet
-  if (mapType ~= MAPTYPE_ZONE and mapType ~= MAPTYPE_SUBZONE) or not WMP_IsPlayerInCurrentZone() then
-    WMP_MESSENGER:Debug("OnMapChanged() wrong map type or player not in zone")
+  if (mapType ~= MAPTYPE_ZONE and mapType ~= MAPTYPE_SUBZONE and mapType ~= MAPTYPE_WORLD) then
+    WMP_MESSENGER:Debug("OnMapChanged() wrong map type.")
     self.m_renderer:Clear()
     return
   end
 
   -- Load the current map
-  self.m_map = WMP_GetZoneMap(WMP_GetActiveMapZoneId())
+  self.m_zone = WMP_GetZoneMap(WMP_GetActiveMapZoneId())
 
   -- We have a target draw it
   if self.m_playerTarget then
-    self:DrawPath(self.m_playerTarget)
+    self:DrawPath()
   end
 end
 
 ---Method called to draw the path on the map
----@param target WMP_Vector
-function WMP_TPSManager:DrawPath(target)
-  WMP_MESSENGER:Debug("DrawPath() Target location <<1>>", target)
+function WMP_TPSManager:DrawPath()
+  local startPos, endPos
 
-  if not self.m_map or not target then
-    WMP_MESSENGER:Debug("DrawPath() No map or not target.")
-    return
+  -- There is not world data, just draw a path
+  if not self.m_worldPath then
+    -- Check this zone is the target zone
+    if WMP_GetActiveMapZoneId() ~= WMP_GetPlayerZoneId() then
+      return
+    end
+
+    startPos = WMP_GetPlayerLocalPos()
+    endPos = WMP_Vector:New(WMP_GlobalToLocal(self.m_playerTarget.x, self.m_playerTarget.y))
+  else
+    WMP_MESSENGER:Debug("DrawPath() Draw world path")
+    -- TODO: Draw path dependent on which zone is being looked at.
+
+    self.m_renderer:SetPath(self.m_worldPath)
+    self.m_renderer:Draw()
   end
 
-  local zoneId = WMP_GetPlayerZoneId()
-  local startPos = WMP_GetPlayerLocalPos()
-  local endPos = WMP_Vector:New(GPS:GlobalToLocal(target.x, target.y))
+  --local pathStart = self.m_zone:GetClosestNode(startPos)
+  --local pathEnd = self.m_zone:GetClosestNode(endPos)
 
-  local pathStart = self.m_map:GetClosestNode(startPos)
-  local pathEnd = self.m_map:GetClosestNode(endPos)
+  --if not pathStart or not pathEnd then
+  --  WMP_MESSENGER:Debug("DrawPath() No path start or path end.")
+  --  return
+  --end
 
-  if not pathStart or not pathEnd then
-    WMP_MESSENGER:Debug("DrawPath() No path start or path end.")
-    return
-  end
-
-  WMP_MESSENGER:Debug("DrawPath() Path start: <<1>> Path end: <<2>>", pathStart, pathEnd)
+  --WMP_MESSENGER:Debug("DrawPath() Path start: <<1>> Path end: <<2>>", pathStart, pathEnd)
 
   ---@diagnostic disable-next-line: undefined-field
-  local path = WMP_ZonePath:New(zoneId, pathStart, pathEnd)
-
-  self.m_renderer:SetPath(path)
-  self.m_renderer:Draw()
+  --local path = WMP_ShortestPath:New(pathStart, pathEnd)
 end
 
 do
-  ---Calculates a path between zones based on their provided id.
-  ---@param startId integer
-  ---@param endId integer
-  ---@return WMP_Path|nil
-  function WMP_TPSManager:CalculateZonePath(startId, endId)
-    WMP_MESSENGER:Debug("Calculating a zone path between <<1>> and <<2>>", startId, endId)
-    return nil
+  ---Calculates the world path between zones
+  ---@param startPosition WMP_Vector
+  ---@param endPosition WMP_Vector
+  ---@return WMP_WorldPath|nil
+  function WMP_TPSManager:CalculateWorldPath(startPosition, endPosition)
+    if not self.m_world then
+      WMP_MESSENGER:Error("WMP_TPSManager:CalculateWorldPath() There is not world map!")
+      return nil
+    end
+
+    WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Getting world path.")
+
+    local startId, endId = WMP_GetZoneIdFromGlobalPos(startPosition.x, startPosition.y),
+        WMP_GetZoneIdFromGlobalPos(endPosition.x, endPosition.y)
+
+    if startId == endId then
+      WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Target in the same zone as player.")
+      return nil
+    end
+
+    WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Target in another zone, start calculating best path.")
+
+    -- Get the start and end nodes in the world
+    local worldPath = self.m_world:GetPath(startId, endId)
+
+    if not worldPath then
+      d('No path found!')
+      return nil
+    end
+
+    return worldPath
   end
 end
 

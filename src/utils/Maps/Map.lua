@@ -1,11 +1,11 @@
 ---Class representation of a map.
----@class WMP_Map : WMP_PathBuilder
-WMP_Map = WMP_PathBuilder:Subclass()
+---@class WMP_Map : WMP_MapBuilder
+WMP_Map = WMP_MapBuilder:Subclass()
 
 ---Creates a new map data structure
 ---@param zoneId integer
 function WMP_Map:Initialize(zoneId)
-  WMP_PathBuilder.Initialize(self)
+  WMP_MapBuilder.Initialize(self)
   self.zoneId = zoneId
 end
 
@@ -13,6 +13,13 @@ end
 ---@return integer
 function WMP_Map:GetZoneId()
   return self.zoneId
+end
+
+---Returns the shortest path between two nodes with the given ids
+---@param startId integer
+---@param endId integer
+function WMP_Map:GetPath(startId, endId)
+  assert(false, "GetPath() must be implemented before using")
 end
 
 ---Format a zone map so it can saved to storage

@@ -1,11 +1,46 @@
 ---Class representation of a word map.
 ---This class is responsible for drawing the connections between zones.
 ---@class WMP_World : WMP_Map
+---@field pathNodes WMP_ZoneNode[]
+---@diagnostic disable-next-line: undefined-field
 WMP_World = WMP_Map:Subclass()
 
 ---Create a new data strucuture to contain world path connections
 function WMP_World:Initialize()
   WMP_Map.Initialize(self, 0)
+end
+
+---Gets the shortest path between two zones bassed on their ids
+---@param startZone integer
+---@param endZone integer
+---@return WMP_WorldPath|nil
+function WMP_World:GetPath(startZone, endZone)
+  WMP_MESSENGER:Debug("WMP_World:GetPath() Getting path between nodes <<1>> and <<2>>.", startZone, endZone)
+
+  if startZone == endZone then
+    WMP_MESSENGER:Warn("WMP_World:GetPath() Nodes should not be in the same zone.")
+    return nil
+  end
+
+  local startNodes = self:GetNodesInZone(startZone)
+  local endNodes = self:GetNodesInZone(endZone)
+
+  -- No path found
+  if #startNodes == 0 or #endNodes == 0 then
+    WMP_MESSENGER:Debug("WMP_World:GetPath() No nodes found in zones.")
+    return nil
+  end
+
+  ---@type WMP_WorldPath
+  ---@diagnostic disable-next-line: undefined-field
+  local worldPath = WMP_WorldPath:New(startNodes[1], endNodes[1])
+
+  if not worldPath:HasPath() then
+    WMP_MESSENGER:Debug("WMP_World:GetPath() No path found.")
+    return nil
+  end
+
+  return worldPath
 end
 
 ---Create a new node bassed on a zone
@@ -19,6 +54,7 @@ function WMP_World:CreateNode(zoneId, position)
 
   local newId = self:GetNextId()
   ---@type WMP_ZoneNode
+  ---@diagnostic disable-next-line: undefined-field
   local newNode = WMP_ZoneNode:New(zoneId, newId, position)
   table.insert(self.pathNodes, newNode)
 
@@ -32,11 +68,28 @@ function WMP_World:LoadNode(node)
   WMP_Map.LoadNode(self, node)
 end
 
+do
+  ---Method for fetching a node in a zone
+  ---@param zoneId integer
+  ---@return WMP_ZoneNode[]
+  function WMP_World:GetNodesInZone(zoneId)
+    local targets = {}
+    for _, node in ipairs(self.pathNodes) do
+      if node:GetZoneId() == zoneId then
+        table.insert(targets, node)
+      end
+    end
+
+    return targets
+  end
+end
+
 ---Format a world map so it can saved to storage
 ---@param map WMP_World
 ---@return table
 function WMP_World:MapToStorage(map)
-  assert(getmetatable(map) == WMP_World, 'Map was not of type WMP_World')
+  ---@diagnostic disable-next-line: undefined-field
+  assert(map:IsInstanceOf(WMP_World), 'Map was not of type WMP_World')
 
   local storage = {}
   storage["zoneId"] = map:GetZoneId()
@@ -44,7 +97,7 @@ function WMP_World:MapToStorage(map)
 
   -- Loop through each node in the map and store it's data
 
-  for i, node in ipairs(map:GetNodes()) do
+  for _, node in ipairs(map:GetNodes()) do
     local n, position = {}, node:GetPosition()
     n["id"] = node:GetId()
     n["zoneId"] = node:GetZoneId()

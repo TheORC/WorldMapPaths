@@ -5,11 +5,11 @@ local function GenerateId()
 end
 
 ---Class providing an interface for storing path information.
----@class WMP_PathBuilder
-WMP_PathBuilder = ZO_InitializingObject:Subclass()
+---@class WMP_MapBuilder
+WMP_MapBuilder = ZO_InitializingObject:Subclass()
 
 ---Creates a new path builder class
-function WMP_PathBuilder:Initialize()
+function WMP_MapBuilder:Initialize()
   ---@type WMP_Node[]
   self.pathNodes = {}
 end
@@ -17,7 +17,7 @@ end
 ---Adds a new node to the map
 ---@param position WMP_Vector
 ---@return integer nodeId, WMP_Node node
-function WMP_PathBuilder:CreateNode(position)
+function WMP_MapBuilder:CreateNode(position)
   assert(position ~= nil, "Position must be defined")
 
   local newId = self:GetNextId()
@@ -29,7 +29,7 @@ end
 
 ---Removes a node from the map.
 ---@param nodeId integer
-function WMP_PathBuilder:RemoveNode(nodeId)
+function WMP_MapBuilder:RemoveNode(nodeId)
   assert(nodeId ~= nil, 'Node id must be defined')
 
   local nodeIndex = self:GetNodeIndex(nodeId)
@@ -55,7 +55,7 @@ end
 
 ---Adds an existing node to the map
 ---@param node WMP_Node
-function WMP_PathBuilder:LoadNode(node)
+function WMP_MapBuilder:LoadNode(node)
   assert(node ~= nil, 'Node must be defined')
 
   -- This node already exists
@@ -70,7 +70,7 @@ end
 ---@param nodeA integer
 ---@param nodeB integer
 ---@return boolean
-function WMP_PathBuilder:AddConnection(nodeA, nodeB)
+function WMP_MapBuilder:AddConnection(nodeA, nodeB)
   assert(nodeA ~= nil, 'NodeA must be defined')
   assert(nodeB ~= nil, 'NodeB must be defined')
 
@@ -89,7 +89,7 @@ end
 ---@param nodeA integer
 ---@param nodeB integer
 ---@return boolean
-function WMP_PathBuilder:RemoveConnection(nodeA, nodeB)
+function WMP_MapBuilder:RemoveConnection(nodeA, nodeB)
   assert(nodeA ~= nil, 'NodeA must be defined')
   assert(nodeB ~= nil, 'NodeB must be defined')
 
@@ -107,7 +107,7 @@ end
 ---Returns the node with the shortest distance to the position
 ---@param position WMP_Vector
 ---@return WMP_Node|nil
-function WMP_PathBuilder:GetClosestNode(position)
+function WMP_MapBuilder:GetClosestNode(position)
   local closest, node = 1 / 0, nil
   for _, n in ipairs(self:GetNodes()) do
     local distance = WMP_Vector.dist(position, n:GetLocalPosition())
@@ -122,7 +122,7 @@ end
 ---Returns a node bassed on it's id.
 ---@param nodeId integer
 ---@return WMP_Node|nil
-function WMP_PathBuilder:GetNode(nodeId)
+function WMP_MapBuilder:GetNode(nodeId)
   local nodeIndex = self:GetNodeIndex(nodeId)
 
   if nodeIndex ~= nil then
@@ -134,7 +134,7 @@ end
 
 ---Returns the list of path nodes
 ---@return WMP_Node[]
-function WMP_PathBuilder:GetNodes()
+function WMP_MapBuilder:GetNodes()
   return self.pathNodes
 end
 
@@ -142,7 +142,7 @@ do
   ---Returns the index of a node or nil if it can't be found
   ---@param nodeId integer
   ---@return integer|nil
-  function WMP_PathBuilder:GetNodeIndex(nodeId)
+  function WMP_MapBuilder:GetNodeIndex(nodeId)
     for i, node in ipairs(self.pathNodes) do
       if node:GetId() == nodeId then
         return i
@@ -153,7 +153,7 @@ do
 
   ---Gets a unique id that has not already been used.
   ---@return integer
-  function WMP_PathBuilder:GetNextId()
+  function WMP_MapBuilder:GetNextId()
     -- Get a unique id for this node
     local nodeId = GenerateId()
     while self:GetNode(nodeId) ~= nil do
@@ -164,9 +164,9 @@ do
 end
 
 ---Converts a path into a storable object
----@param map WMP_PathBuilder
+---@param map WMP_MapBuilder
 ---@return table
-function WMP_PathBuilder.ToStorage(map)
+function WMP_MapBuilder.ToStorage(map)
   assert(false, "To storage needs to be extended")
   return {}
 end
@@ -174,7 +174,7 @@ end
 ---Converts a stored object into a path
 ---@param mapData table
 ---@return any
-function WMP_PathBuilder.FromStorage(mapData)
+function WMP_MapBuilder.FromStorage(mapData)
   assert(false, "From storage needs to be extended")
   return {}
 end
