@@ -21,6 +21,7 @@ local function WMP_Message(mode, message, ...)
     convertedArgs[i] = tostring(item)
   end
 
+  ---@diagnostic disable-next-line: deprecated
   d(zo_strformat("|c0000F1[TPS]:|r |c<<1>><<2>>|r", mode, zo_strformat(message, unpack(convertedArgs))))
 end
 

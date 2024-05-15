@@ -1,5 +1,6 @@
 ---Class representation of a map.
 ---@class WMP_Zone : WMP_Map
+---@diagnostic disable-next-line: undefined-field
 WMP_Zone = WMP_Map:Subclass()
 
 ---Creates a new map data structure

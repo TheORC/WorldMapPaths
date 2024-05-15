@@ -21,6 +21,7 @@ function WMP_MapBuilder:CreateNode(position)
   assert(position ~= nil, "Position must be defined")
 
   local newId = self:GetNextId()
+  ---@diagnostic disable-next-line: undefined-field
   local newNode = WMP_Node:New(newId, position)
   table.insert(self.pathNodes, newNode)
 

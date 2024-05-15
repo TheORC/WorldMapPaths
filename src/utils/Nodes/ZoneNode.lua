@@ -1,5 +1,6 @@
 ---Class contraining a node for use in an A* path finding algorythm.
 ---@class WMP_ZoneNode : WMP_Node
+---@diagnostic disable-next-line: undefined-field
 WMP_ZoneNode = WMP_Node:Subclass()
 
 ---Creates a new node

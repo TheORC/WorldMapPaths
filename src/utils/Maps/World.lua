@@ -15,21 +15,23 @@ end
 ---@param endZone integer
 ---@return WMP_WorldPath|nil
 function WMP_World:GetPath(startZone, endZone)
-  WMP_MESSENGER:Debug("WMP_World:GetPath() Getting path between nodes <<1>> and <<2>>.", startZone, endZone)
-
   if startZone == endZone then
-    WMP_MESSENGER:Warn("WMP_World:GetPath() Nodes should not be in the same zone.")
+    WMP_MESSENGER:Debug("WMP_World:GetPath() Unable to caluclate a world path between the same zones.")
     return nil
   end
+
+  WMP_MESSENGER:Debug("WMP_World:GetPath() Getting path between zones <<1>> and <<2>>.", startZone, endZone)
 
   local startNodes = self:GetNodesInZone(startZone)
   local endNodes = self:GetNodesInZone(endZone)
 
   -- No path found
   if #startNodes == 0 or #endNodes == 0 then
-    WMP_MESSENGER:Debug("WMP_World:GetPath() No nodes found in zones.")
+    WMP_MESSENGER:Debug("WMP_World:GetPath() Missing world nodes in one(both) zones.")
     return nil
   end
+
+  WMP_MESSENGER:Debug("WMP_World:GetPath() Start and end nodes found. Calculating path.")
 
   ---@type WMP_WorldPath
   ---@diagnostic disable-next-line: undefined-field
@@ -39,6 +41,8 @@ function WMP_World:GetPath(startZone, endZone)
     WMP_MESSENGER:Debug("WMP_World:GetPath() No path found.")
     return nil
   end
+
+  WMP_MESSENGER:Debug("WMP_World:GetPath() Path found.")
 
   return worldPath
 end
@@ -100,6 +104,7 @@ function WMP_World:MapToStorage(map)
   for _, node in ipairs(map:GetNodes()) do
     local n, position = {}, node:GetPosition()
     n["id"] = node:GetId()
+    ---@diagnostic disable-next-line: undefined-field
     n["zoneId"] = node:GetZoneId()
     n["position"] = { ["x"] = position.x, ["y"] = position.y }
     n["neighbours"] = {}

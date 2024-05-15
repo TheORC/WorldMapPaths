@@ -1,4 +1,5 @@
 ---@class WMP_ShortestPath : WMP_Path
+---@diagnostic disable-next-line: undefined-field
 WMP_ShortestPath = WMP_Path:Subclass()
 
 ---Creates a new shortest path object

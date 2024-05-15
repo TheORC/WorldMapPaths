@@ -1,5 +1,6 @@
 ---@class WMP_WorldPath : WMP_ShortestPath
 ---@field pathNodes WMP_ZoneNode[]
+---@diagnostic disable-next-line: undefined-field
 WMP_WorldPath = WMP_ShortestPath:Subclass()
 
 ---Creates new world path calculator

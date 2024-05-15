@@ -34,6 +34,7 @@ function WMP_MapMaker:AddNode(connect_previous)
   local nodeId, node
   if self.m_map:GetZoneId() == 0 then
     WMP_MESSENGER:Debug("WMP_MapMaker:AddNode() Adding node to world map.")
+    ---@diagnostic disable-next-line: param-type-mismatch, redundant-parameter
     nodeId, node = self.m_map:CreateNode(zoneId, position)
   else
     WMP_MESSENGER:Debug("WMP_MapMaker:AddNode() Adding node to zone map.")

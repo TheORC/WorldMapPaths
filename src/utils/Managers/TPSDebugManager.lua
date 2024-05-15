@@ -61,9 +61,11 @@ function WMP_TPSDebugManager:LoadMap(zoneId)
 
     if zoneId == 0 then
       WMP_MESSENGER:Debug("WMP_TPSDebugManager:LoadMap() Create a new world map.")
+      ---@diagnostic disable-next-line: undefined-field
       self.m_map = WMP_World:New()
     else
       WMP_MESSENGER:Debug("WMP_TPSDebugManager:LoadMap() Create a new zone map.")
+      ---@diagnostic disable-next-line: undefined-field
       self.m_map = WMP_Zone:New(zoneId)
     end
 

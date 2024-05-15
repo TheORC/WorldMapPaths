@@ -21,7 +21,7 @@ end
 
 ---Create a normal TPS path manager
 function WMP_TPSManager:LateInitialize()
-  ---@type WMP_World
+  ---@diagnostic disable-next-line: assign-type-mismatch
   self.m_world = WMP_GetZoneMap(0)
 end
 
@@ -39,7 +39,8 @@ function WMP_TPSManager:OnPingAdded(pingType, pingTag, x, y, isPingOwner)
   self.m_playerTarget = WMP_Vector:New(GPS:LocalToGlobal(x, y))
   self.m_playerPosition = WMP_GetPlayerGlobalPos()
 
-  WMP_MESSENGER:Debug("Target zone: <<1>>", WMP_GetZoneIdFromGlobalVector(self.m_playerTarget))
+  WMP_MESSENGER:Debug("WMP_TPSManager:OnPingAdded() Player target in zone: <<1>>",
+    WMP_GetZoneIdFromGlobalVector(self.m_playerTarget))
 
   -- Calculate a world path
   self.m_worldPath = self:CalculateWorldPath(self.m_playerPosition, self.m_playerTarget)
@@ -92,6 +93,8 @@ function WMP_TPSManager:DrawPath()
 
   -- There is not world data, just draw a path
   if not self.m_worldPath then
+    WMP_MESSENGER:Debug("WMP_TPSManager:DrawPath() Draw zone path")
+
     -- Check this zone is the target zone
     if WMP_GetActiveMapZoneId() ~= WMP_GetPlayerZoneId() then
       return
@@ -100,7 +103,7 @@ function WMP_TPSManager:DrawPath()
     startPos = WMP_GetPlayerLocalPos()
     endPos = WMP_Vector:New(WMP_GlobalToLocal(self.m_playerTarget.x, self.m_playerTarget.y))
   else
-    WMP_MESSENGER:Debug("DrawPath() Draw world path")
+    WMP_MESSENGER:Debug("WMP_TPSManager:DrawPath() Draw world path")
     -- TODO: Draw path dependent on which zone is being looked at.
 
     self.m_renderer:SetPath(self.m_worldPath)
@@ -132,23 +135,17 @@ do
       return nil
     end
 
-    WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Getting world path.")
+    -- Get the path target zones
+    local startId, endId = WMP_GetZoneIdFromGlobalVector(startPosition), WMP_GetZoneIdFromGlobalVector(endPosition)
 
-    local startId, endId = WMP_GetZoneIdFromGlobalPos(startPosition.x, startPosition.y),
-        WMP_GetZoneIdFromGlobalPos(endPosition.x, endPosition.y)
-
-    if startId == endId then
-      WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Target in the same zone as player.")
-      return nil
-    end
-
-    WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Target in another zone, start calculating best path.")
+    WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() Calculating world path between zones <<1>> and <<2>>.",
+      startId, endId)
 
     -- Get the start and end nodes in the world
     local worldPath = self.m_world:GetPath(startId, endId)
 
     if not worldPath then
-      d('No path found!')
+      WMP_MESSENGER:Debug("WMP_TPSManager:CalculateWorldPath() No path found.")
       return nil
     end
 

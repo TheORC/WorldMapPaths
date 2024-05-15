@@ -1,5 +1,6 @@
 ---Class for creating a path renderer
 ---@class WMP_PathRender : WMP_Renderer
+---@diagnostic disable-next-line: undefined-field
 local WMP_PathRender = WMP_Renderer:Subclass()
 
 function WMP_PathRender:Initialize()
