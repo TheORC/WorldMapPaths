@@ -41,6 +41,13 @@ function WMP_GetZoneIdFromGlobalPos(x, y)
   return zoneId
 end
 
+---Gets the closes zone to the provided global position
+---@param pos WMP_Vector
+---@return integer
+function WMP_GetZoneIdFromGlobalVector(pos)
+  return WMP_GetZoneIdFromGlobalPos(pos.x, pos.y)
+end
+
 ---Returns the player current local position
 ---@return WMP_Vector
 function WMP_GetPlayerLocalPos()
