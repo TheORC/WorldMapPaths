@@ -53,10 +53,12 @@ function WMP_MapMaker:AddNode(connect_previous)
   if connect_previous and self.m_previousNode ~= nil and self.m_map:GetZoneId() ~= 0 then
     WMP_MESSENGER:Debug("AddNode() Connect to last placed node <<1>>", self.m_previousNode)
     self:AddConnection(nodeId, self.m_previousNode)
+  else
+    self:OnUpdate()
   end
 
+  WMP_DebugUI_SetAText(nodeId)
   self.m_previousNode = nodeId
-  self:OnUpdate()
 end
 
 ---Removes a node with the specified node from the current map
@@ -103,6 +105,7 @@ function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB)
   end
 
   WMP_MESSENGER:Message("Added connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
+
   self:OnUpdate()
 end
 
@@ -152,10 +155,14 @@ function WMP_MapMaker:SetMap(map)
   WMP_MESSENGER:Debug("WMP_MapMaker:SetMap() Map maker map set")
   self.m_map = map
   self.m_previousNode = nil
+
+  self:OnUpdate()
 end
 
 do
+  ---Update the debug renderer
   function WMP_MapMaker:OnUpdate()
+    d("Draw map")
     WMP_TPS_DEBUG_MANAGER:Drawpath()
   end
 end

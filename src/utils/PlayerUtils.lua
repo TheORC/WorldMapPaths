@@ -75,6 +75,22 @@ function WMP_LocalToGlobal(x, y)
   return GPS:LocalToGlobal(x, y)
 end
 
+---Converts a local vector position into a global position
+---@param pos WMP_Vector
+---@return WMP_Vector
+function WMP_LocalToGlobalVec(pos)
+  local x, y = WMP_LocalToGlobal(pos.x, pos.y)
+  return WMP_Vector:New(x, y)
+end
+
+---Converts a global vector position into a local position
+---@param pos WMP_Vector
+---@return WMP_Vector
+function WMP_GlobalToLocalVec(pos)
+  local x, y = WMP_GlobalToLocal(pos.x, pos.y)
+  return WMP_Vector:New(x, y)
+end
+
 ---Converts a global x y position in a local x y position
 ---@param x number
 ---@param y number

@@ -5,12 +5,14 @@ WMP_ShortestPath = WMP_Path:Subclass()
 ---Creates a new shortest path object
 ---@param startNode WMP_Node
 ---@param endNode WMP_Node
-function WMP_ShortestPath:Initialize(startNode, endNode)
+---@param cost function|nil
+function WMP_ShortestPath:Initialize(startNode, endNode, cost)
   assert(startNode ~= nil, "The start node can not be nil")
   assert(endNode ~= nil, "The end node can not be nil")
 
   WMP_Path.Initialize(self)
 
+  self.cost = cost
   self.startNode = startNode
   self.endNode = endNode
   self.pathNodes = {}
@@ -34,7 +36,8 @@ end
 do
   ---Calculates the shortest path between the start and end nodes
   function WMP_ShortestPath:CalculateShortestPath()
-    self.pathNodes = WMP_Calculate(self.startNode, self.endNode)
+    local shortestPath = WMP_Calculate(self.startNode, self.endNode, self.cost)
+    self.pathNodes = shortestPath or {}
     self.pathLines = self:NodesToLines(self.pathNodes)
   end
 end

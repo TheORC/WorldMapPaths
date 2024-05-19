@@ -70,12 +70,28 @@ local function OnAddonLoad(_, name)
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
 
+
+
     -- Load our storage
     WMP_STORAGE:LoadData()
     WMP_TPS_MANAGER:LateInitialize()
 
+    ZO_WorldMap_SetCustomZoomLevels(1, 15)
+
     WMP_SetMakeMode(false)
     WMP_SetDebugMode(true)
+
+    WORLD_MAP_SCENE:RegisterCallback("StateChange", function(oldState, newState)
+        if newState == 'shown' then
+            WMP_DEBUG_RENDERER.m_mapSceneShowing = true
+
+            if WMP_InMakeMode() then
+                WMP_DEBUG_RENDERER:Draw()
+            end
+        else
+            WMP_DEBUG_RENDERER.m_mapSceneShowing = false
+        end
+    end)
 
     SLASH_COMMANDS["/wmp"] = function(args)
         local options = parseCommandArgs(args)

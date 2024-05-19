@@ -24,7 +24,7 @@ do
     local linkControl, startX, startY, endX, endY
     local mapWidth, mapHeight = ZO_WorldMapContainer:GetDimensions()
 
-    for i, line in ipairs(self.path:GetLines()) do
+    for _, line in ipairs(self.path:GetLines()) do
       -- Get a new line
       linkControl = self.linkPool:AcquireObject()
 

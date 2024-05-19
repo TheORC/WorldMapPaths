@@ -14,6 +14,7 @@ function WMP_Debug_Render:Initialize()
   WMP_Renderer.Initialize(self, 'Debug')
   self:CreatePinType()
   self.m_map = nil
+  self.m_mapSceneShowing = false
 end
 
 ---Clears the current draw map and redraws it
@@ -28,6 +29,11 @@ end
 
 ---Draws the current map information
 function WMP_Debug_Render:Draw()
+  -- Why update the map when we are not looking at it
+  if not self.m_mapSceneShowing then
+    return
+  end
+
   -- Clear the old render
   self:Clear()
 
@@ -54,9 +60,16 @@ function WMP_Debug_Render:DrawPoints()
 
   for _, node in ipairs(nodes) do
     local nodePos = node:GetLocalPosition()
+    local zoneId = 'none'
+
+    if node:IsInstanceOf(WMP_ZoneNode) then
+      zoneId = node:GetZoneId()
+    end
+
 
     LMP:CreatePin(PIN_TYPE, {
       node_id = node:GetId(),
+      zone_id = zoneId
     }, nodePos.x, nodePos.y, nil)
   end
 end
@@ -102,6 +115,10 @@ do
       creator = function(pin)
         local _, pinData = pin:GetPinTypeAndTag()
         InformationTooltip:AddLine(zo_strformat("Id: <<1>>", pinData.node_id))
+
+        if pinData.zone_id ~= 'none' then
+          InformationTooltip:AddLine(zo_strformat("Zone: <<1>>", pinData.zone_id))
+        end
       end
     })
 

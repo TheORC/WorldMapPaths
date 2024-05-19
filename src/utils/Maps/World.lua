@@ -31,11 +31,24 @@ function WMP_World:GetPath(startZone, endZone)
     return nil
   end
 
-  WMP_MESSENGER:Debug("WMP_World:GetPath() Start and end nodes found. Calculating path.")
+  local closest, distance = nil, 1 / 0
+  for _, node in ipairs(startNodes) do
+    for _, other in ipairs(endNodes) do
+      local curDistance = WMP_Vector.dist(node:GetPosition(), other:GetPosition())
+      if curDistance < distance then
+        closest = node
+        distance = curDistance
+      end
+    end
+  end
+
+
+  WMP_MESSENGER:Debug("WMP_World:GetPath() Start and end nodes found <<1>> <<2>>. Calculating path.",
+    closest:GetId(), endNodes[1]:GetId())
 
   ---@type WMP_WorldPath
   ---@diagnostic disable-next-line: undefined-field
-  local worldPath = WMP_WorldPath:New(startNodes[1], endNodes[1])
+  local worldPath = WMP_WorldPath:New(closest, endNodes[1])
 
   if not worldPath:HasPath() then
     WMP_MESSENGER:Debug("WMP_World:GetPath() No path found.")

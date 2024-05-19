@@ -126,6 +126,18 @@
               <OnClicked>WMP_DebugUI_Setting_ShowPath(self)</OnClicked>
             </Button>
 
+            <Button name="$(parent)ShowRegion" inherits="WMP_LabelCheck" clickSound="Click">
+              <Anchor point="LEFT" relativePoint="LEFT" />
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Region")</OnInitialized>
+              <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
+            </Button>
+
+            <Button name="$(parent)ShowExternal" inherits="WMP_LabelCheck" clickSound="Click">
+              <Anchor point="LEFT" relativePoint="LEFT" />
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show External")</OnInitialized>
+              <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
+            </Button>
+
           </Controls>
         </Control>
 

@@ -90,17 +90,20 @@ end
 ---Caluclate the shortest path between the start and goal.
 ---@param start WMP_Node
 ---@param goal WMP_Node
-function WMP_Calculate(start, goal)
+---@param cost function|nil
+function WMP_Calculate(start, goal, cost)
+  cost = cost or h
+
   local open_set = { start }
   local closed_set = {}
   local came_from = {}
 
   local g_score, f_score = {}, {}
   g_score[start] = 0
-  f_score[start] = g_score[start] + h(start, goal)
+  f_score[start] = g_score[start] + cost(start, goal)
 
   -- While we have nodes to search, keep looking for the shortest path
-  while #open_set do
+  while #open_set > 0 do
     -- Get the next closes node to the goal
     local current = calculate_lowest_f(open_set, f_score)
 
@@ -129,7 +132,7 @@ function WMP_Calculate(start, goal)
 
           -- Update the neighbours g_score and f_score
           g_score[neighbour] = tentative_g
-          f_score[neighbour] = tentative_g + h(neighbour, goal)
+          f_score[neighbour] = tentative_g + cost(neighbour, goal)
 
           -- Check this is not already in the open_set
           if not_in(open_set, neighbour) then

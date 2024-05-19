@@ -25,19 +25,30 @@ function WMP_WorldPath:GetZoneNodes(zondId)
   return self.zonePaths[zondId]
 end
 
+---Returns whether a zone has any path data.
+---@param zoneId integer
+---@return boolean
+function WMP_WorldPath:HasZoneNodes(zoneId)
+  return self.zonePaths[zoneId] ~= nil
+end
+
 do
   ---Parse the world path such that we can glean information about which parts of the path exist in
   ---which zones.
   function WMP_WorldPath:ParseZoneInformation()
+    local zoneData = {}
+
     for _, node in ipairs(self.pathNodes) do
       local nodeZone = node:GetZoneId()
 
-      if self.zonePaths[nodeZone] == nil then
-        self.zonePaths[nodeZone] = {}
+      if not zoneData[nodeZone] then
+        zoneData[nodeZone] = {}
       end
 
-      table.insert(self.zonePaths[nodeZone], node)
+      table.insert(zoneData[nodeZone], node)
     end
+
+    self.zonePaths = zoneData
   end
 
   ---Trims the path so that only a single node will exist in the start and end zones.

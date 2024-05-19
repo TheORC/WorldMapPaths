@@ -29,12 +29,20 @@ function WMP_Debug_Menu:SetTextCopy(text)
   self.m_edit:SetText(text)
 end
 
+---Set the contents of A fields
+---@param text string
+function WMP_Debug_Menu:SetTextA(text)
+  self.m_connectAEdit:SetText(text)
+  self.m_disconnectAEdit:SetText(text)
+end
+
 ---Method called to add a new node to the map
 function WMP_Debug_Menu:AddNode()
   WMP_MESSENGER:Debug("MapUI:AddNode() Adding node")
 
   local connectLast = ZO_CheckButton_IsChecked(self.m_connectLast)
   WMP_MAP_MAKER:AddNode(connectLast)
+
   self:OnMapUpdate()
 end
 
@@ -110,6 +118,12 @@ end
 ---@param text string
 function WMP_DebugUI_SetCopytext(text)
   WMP_GetDebugMenu():SetTextCopy(text)
+end
+
+---Sets the contents of A box for connect and disconnect
+---@param text string
+function WMP_DebugUI_SetAText(text)
+  WMP_GetDebugMenu():SetTextA(text)
 end
 
 ---Method used to focus text inside an EditBox when it revieves focus
