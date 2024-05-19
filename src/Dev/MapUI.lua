@@ -14,7 +14,8 @@ end
 function WMP_Debug_Menu:Initialize(control)
   self.m_control = control
   self.m_edit = control:GetNamedChild("EditCopyBox")
-  self.m_connectLast = control:GetNamedChild("AddRegionConnectLast")
+  self.m_connectLast = control:GetNamedChild("SettingsRegionConnectLast")
+  self.m_oneWay = control:GetNamedChild("SettingsRegionOneWay")
   self.m_removeEdit = control:GetNamedChild("RemoveRegionRemoveEditEdit")
   self.m_connectAEdit = control:GetNamedChild("ConnectRegionNode1Edit")
   self.m_connectBEdit = control:GetNamedChild("ConnectRegionNode2Edit")
@@ -41,7 +42,9 @@ function WMP_Debug_Menu:AddNode()
   WMP_MESSENGER:Debug("MapUI:AddNode() Adding node")
 
   local connectLast = ZO_CheckButton_IsChecked(self.m_connectLast)
-  WMP_MAP_MAKER:AddNode(connectLast)
+  local oneWay = ZO_CheckButton_IsChecked(self.m_oneWay)
+
+  WMP_MAP_MAKER:AddNode(connectLast, oneWay)
 
   self:OnMapUpdate()
 end
@@ -72,7 +75,9 @@ function WMP_Debug_Menu:ConnectNodes()
     return
   end
 
-  WMP_MAP_MAKER:AddConnection(nodeAId, nodeBId)
+  local oneWay = ZO_CheckButton_IsChecked(self.m_oneWay)
+
+  WMP_MAP_MAKER:AddConnection(nodeAId, nodeBId, oneWay)
   self:OnMapUpdate()
 end
 
@@ -170,6 +175,22 @@ function WMP_DebugUI_Setting_ShowPath(self)
   ZO_CheckButton_SetCheckState(self, showPath)
 
   WMP_STORAGE:SetSetting(WMP_SETTING_KEYS.DEBUG_DRAW_PATH, showPath)
+  WMP_DEBUG_RENDERER:Draw()
+end
+
+function WMP_DebugUI_ToggleShowRegion(self)
+  local showRegion = not ZO_CheckButton_IsChecked(self)
+  ZO_CheckButton_SetCheckState(self, showRegion)
+
+  WMP_DEBUG_RENDERER:SetDrawRegion(showRegion)
+  WMP_DEBUG_RENDERER:Draw()
+end
+
+function WMP_DebugUI_ToggleShowExternal(self)
+  local showExternal = not ZO_CheckButton_IsChecked(self)
+  ZO_CheckButton_SetCheckState(self, showExternal)
+
+  WMP_DEBUG_RENDERER:SetDrawExternal(showExternal)
   WMP_DEBUG_RENDERER:Draw()
 end
 

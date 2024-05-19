@@ -1,7 +1,7 @@
 <GuiXml>
   <Controls>
     <TopLevelControl name="WMP_DebugMap_UI" clampedToScreen="true" movable="true" mouseEnabled="true" hidden="false" resizeHandleSize="10">
-      <Dimensions x="300" y="430"/>
+      <Dimensions x="300" y="500"/>
       <Anchor point="CENTER" relativeTo="GUI_ROOT" relativePoint="CENTER" offsetX="-300" offsetY="50" />
       <OnInitialized>WMP_DebugUI_OnInitialized(self)</OnInitialized>
       <Controls>
@@ -26,11 +26,6 @@
               <Dimensions x="120"/>
               <OnClicked>WMP_DebugUI_Add()</OnClicked>
               <OnInitialized>WMP_LabelButton_OnInitialized(self, "Add")</OnInitialized>
-            </Button>
-
-            <Button name="$(parent)ConnectLast" inherits="WMP_LabelCheck">
-              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)Add" />
-              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Add")</OnInitialized>
             </Button>
           </Controls>
         </Control>
@@ -112,10 +107,21 @@
         <!-- Settings -->
         <Control name="$(parent)SettingsRegion">
           <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)DisconnectRegion" offsetY="20" offsetX="10"/>
-          <Dimensions x="300" y="20"/>
+          <Dimensions x="300" y="70"/>
           <Controls>
+
+            <Button name="$(parent)ConnectLast" inherits="WMP_LabelCheck">
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Connect Last")</OnInitialized>
+            </Button>
+
+            <Button name="$(parent)OneWay" inherits="WMP_LabelCheck">
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)ConnectLastLabel" offsetX="10"/>
+              <OnInitialized>WMP_LabelCheck_OnInitialized(self, false, "One Way")</OnInitialized>
+            </Button>
+
             <Button name="$(parent)ShowPoints" inherits="WMP_LabelCheck" clickSound="Click">
-              <Anchor point="LEFT" relativePoint="LEFT" />
+              <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)ConnectLast" offsetY="20" />
               <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Points")</OnInitialized>
               <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
             </Button>
@@ -127,15 +133,15 @@
             </Button>
 
             <Button name="$(parent)ShowRegion" inherits="WMP_LabelCheck" clickSound="Click">
-              <Anchor point="LEFT" relativePoint="LEFT" />
+              <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$(parent)ShowPoints" offsetY="5" />
               <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show Region")</OnInitialized>
-              <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
+              <OnClicked>WMP_DebugUI_ToggleShowRegion(self)</OnClicked>
             </Button>
 
             <Button name="$(parent)ShowExternal" inherits="WMP_LabelCheck" clickSound="Click">
-              <Anchor point="LEFT" relativePoint="LEFT" />
+              <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)ShowRegionLabel" offsetX="10" />
               <OnInitialized>WMP_LabelCheck_OnInitialized(self, true, "Show External")</OnInitialized>
-              <OnClicked>WMP_DebugUI_Setting_ShowPoint(self)</OnClicked>
+              <OnClicked>WMP_DebugUI_ToggleShowExternal(self)</OnClicked>
             </Button>
 
           </Controls>

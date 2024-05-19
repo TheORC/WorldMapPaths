@@ -40,6 +40,23 @@ function WMP_Path:GetLines()
   return self.pathLines
 end
 
+---Returns the total length of the path
+---@return number
+function WMP_Path:GetLength()
+  local length = 0
+  for _, line in ipairs(self.pathLines) do
+    length = length + WMP_Vector.dist(line:GetStartPos(), line:GetEndPos())
+  end
+
+  return length
+end
+
+---Returns the number of path lines
+---@return integer
+function WMP_Path:GetLineCount()
+  return #self.pathLines
+end
+
 do
   ---Convert a list of nodes into a path
   ---@param nodes WMP_Node[]|nil

@@ -31,13 +31,18 @@ function WMP_World:GetPath(startZone, endZone)
     return nil
   end
 
+  local path = nil
   local closest, distance = nil, 1 / 0
+
   for _, node in ipairs(startNodes) do
     for _, other in ipairs(endNodes) do
-      local curDistance = WMP_Vector.dist(node:GetPosition(), other:GetPosition())
-      if curDistance < distance then
+      -- curDistance = WMP_Vector.dist(node:GetPosition(), other:GetPosition())
+      --- @type WMP_ShortestPath
+      path = WMP_ShortestPath:New(node, other)
+
+      if path:GetLineCount() < distance then
         closest = node
-        distance = curDistance
+        distance = path:GetLineCount()
       end
     end
   end
@@ -123,7 +128,7 @@ function WMP_World:MapToStorage(map)
     n["neighbours"] = {}
 
     -- Loop through this nodes neighbours and store
-    for j, neighbour in ipairs(node:GetNeighbours()) do
+    for _, neighbour in ipairs(node:GetNeighbours()) do
       table.insert(n["neighbours"], neighbour:GetId())
     end
 
@@ -164,7 +169,7 @@ function WMP_World:StorageToMap(mapData)
 
   -- Constrct map connections
   for _, connection in ipairs(allConnections) do
-    newMap:AddConnection(connection[1], connection[2])
+    newMap:AddConnection(connection[1], connection[2], false)
   end
 
   return newMap

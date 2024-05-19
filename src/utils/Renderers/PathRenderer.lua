@@ -21,16 +21,19 @@ end
 do
   ---Method for drawing a path on the current map
   function WMP_PathRender:DrawPath()
-    local linkControl, startX, startY, endX, endY
+    local linkControl, startPos, endPos, startX, startY, endX, endY
     local mapWidth, mapHeight = ZO_WorldMapContainer:GetDimensions()
 
     for _, line in ipairs(self.path:GetLines()) do
       -- Get a new line
       linkControl = self.linkPool:AcquireObject()
 
+      startPos = line:GetStartPos()
+      endPos = line:GetEndPos()
+
       -- Set the start and end positions
-      linkControl.startX, linkControl.startY = line:GetStartPos()
-      linkControl.endX, linkControl.endY = line:GetEndPos()
+      linkControl.startX, linkControl.startY = startPos.x, startPos.y
+      linkControl.endX, linkControl.endY = endPos.x, endPos.y
 
       linkControl:SetTexture("EsoUI/Art/AvA/AvA_transitLine.dds")
       linkControl:SetColor(1, 1, 1, 1)

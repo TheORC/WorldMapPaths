@@ -187,10 +187,6 @@ do
 
     return worldPath
   end
-
-  function WMP_TPSManager:CalculateZonePath(startPosition, endPosition)
-
-  end
 end
 
 ---@type WMP_TPSManager

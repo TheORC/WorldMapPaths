@@ -7,23 +7,22 @@ WMP_Line = ZO_InitializingObject:Subclass()
 ---Initializes a new line
 ---@param startPos WMP_Vector
 ---@param endPos WMP_Vector
-function WMP_Line:Initialize(startPos, endPos)
+function WMP_Line:Initialize(startPos, endPos, color)
   self.startPos = startPos
   self.endPos = endPos
+  self.color = color or { 1, 1, 1, 1 }
 end
 
 ---Gets the starting position of the line
----@return number
----@return number
+---@return WMP_Vector
 function WMP_Line:GetStartPos()
-  return self.startPos.x, self.startPos.y
+  return self.startPos
 end
 
 ---Gets the end position of the line
----@return number
----@return number
+---@return WMP_Vector
 function WMP_Line:GetEndPos()
-  return self.endPos.x, self.endPos.y
+  return self.endPos
 end
 
 ---Check if two lines are the same.

@@ -41,7 +41,6 @@ end
 function WMP_Zone:StorageToMap(mapData)
   local zoneId = mapData["zoneId"]
   local nodes = mapData["nodes"]
-
   local allConnections = {}
 
   ---@type WMP_Zone
@@ -68,7 +67,7 @@ function WMP_Zone:StorageToMap(mapData)
 
   -- Constrct map connections
   for _, connection in ipairs(allConnections) do
-    newMap:AddConnection(connection[1], connection[2])
+    newMap:AddConnection(connection[1], connection[2], false)
   end
 
   return newMap

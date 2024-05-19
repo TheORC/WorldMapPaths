@@ -15,7 +15,8 @@ end
 ---Adds a new zone to the zone map. If `connect_previous` is set to true, the new node will be set
 ---as a neighbour.
 ---@param connect_previous boolean whether the new node is a neighbour of the previous node
-function WMP_MapMaker:AddNode(connect_previous)
+---@param oneWay boolean whether the connection with the last node is one way
+function WMP_MapMaker:AddNode(connect_previous, oneWay)
   -- Check to make sure we are making a map
   if self.m_map == nil then
     WMP_MESSENGER:Warn("WMP_MapMaker:AddNode() Attempting to add a node when no map has been set")
@@ -52,7 +53,7 @@ function WMP_MapMaker:AddNode(connect_previous)
   -- We don't do this for the world map
   if connect_previous and self.m_previousNode ~= nil and self.m_map:GetZoneId() ~= 0 then
     WMP_MESSENGER:Debug("AddNode() Connect to last placed node <<1>>", self.m_previousNode)
-    self:AddConnection(nodeId, self.m_previousNode)
+    self:AddConnection(nodeId, self.m_previousNode, oneWay)
   else
     self:OnUpdate()
   end
@@ -84,7 +85,8 @@ end
 ---Adds a connection between two nodes
 ---@param nodeIdA number
 ---@param nodeIdB number
-function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB)
+---@param oneWay boolean
+function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB, oneWay)
   -- Check to make sure we are making a map
   if self.m_map == nil then
     WMP_MESSENGER:Warn("WMP_MapMaker:AddConnection() Attempting to add a connection when no map has been set")
@@ -96,8 +98,9 @@ function WMP_MapMaker:AddConnection(nodeIdA, nodeIdB)
     return
   end
 
-  WMP_MESSENGER:Debug("WMP_MapMaker:AddConnection() Adding connection between <<1>> and <<2>>", nodeIdA, nodeIdB)
-  local success = self.m_map:AddConnection(nodeIdA, nodeIdB)
+  WMP_MESSENGER:Debug("WMP_MapMaker:AddConnection() Adding connection between <<1>> and <<2>>. Is oneway <<3>>", nodeIdA,
+    nodeIdB, oneWay)
+  local success = self.m_map:AddConnection(nodeIdA, nodeIdB, not oneWay)
 
   if not success then
     WMP_MESSENGER:Error("WMP_MapMaker:AddConnection() Failed to create connection between nodes")
@@ -162,7 +165,6 @@ end
 do
   ---Update the debug renderer
   function WMP_MapMaker:OnUpdate()
-    d("Draw map")
     WMP_TPS_DEBUG_MANAGER:Drawpath()
   end
 end

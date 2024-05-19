@@ -28,6 +28,7 @@ end
 
 ---Class contraining a node for use in an A* path finding algorythm.
 ---@class WMP_Node
+---@field m_neighbours WMP_Node[]
 WMP_Node = ZO_InitializingObject:Subclass()
 
 ---Creates a new node
@@ -85,6 +86,19 @@ end
 ---@return integer
 function WMP_Node:GetId()
   return self.m_id
+end
+
+---Check if a node has a connection to a neighbour
+---@param neighbourId integer
+---@return boolean
+function WMP_Node:HasNeighbour(neighbourId)
+  for _, node in ipairs(self.m_neighbours) do
+    if node:GetId() == neighbourId then
+      return true
+    end
+  end
+
+  return false
 end
 
 ---String representation of a node

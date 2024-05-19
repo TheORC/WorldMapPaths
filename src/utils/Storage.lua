@@ -24,6 +24,7 @@ local WMP_Storage    = ZO_InitializingObject:Subclass()
 ---Load any stored data from the disk.
 function WMP_Storage:LoadData()
     self.storage = ZO_SavedVars:NewCharacterIdSettings("WorldMapPathsVars", dataVersion, nil, storageDefault)
+    self.mapCache = {}
 end
 
 ---Return the setting with the given name
@@ -68,6 +69,11 @@ end
 ---@param zoneId integer
 ---@return WMP_Map|nil
 function WMP_Storage:GetMap(zoneId)
+    -- Check if this zone is already loaded
+    if self.mapCache[zoneId] then
+        return self.mapCache[zoneId]
+    end
+
     local index = self:FindMapIndex(zoneId)
 
     if index == nil then
@@ -75,12 +81,15 @@ function WMP_Storage:GetMap(zoneId)
     end
 
     local mapData = self.storage[MAP_KEY][index]
-
+    local worldData = nil
     if zoneId == 0 then
-        return WMP_World:StorageToMap(mapData)
+        worldData = WMP_World:StorageToMap(mapData)
     else
-        return WMP_Zone:StorageToMap(mapData)
+        worldData = WMP_Zone:StorageToMap(mapData)
     end
+
+    self.mapCache[zoneId] = worldData
+    return self.mapCache[zoneId]
 end
 
 do

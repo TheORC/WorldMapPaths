@@ -42,9 +42,16 @@ function WMP_MapBuilder:RemoveNode(nodeId)
 
   local node = self.pathNodes[nodeIndex]
   local ids = {}
-  for _, neighbour in ipairs(node:GetNeighbours()) do
-    table.insert(ids, neighbour:GetId())
+
+  for _, neighbour in ipairs(self.pathNodes) do
+    if neighbour:HasNeighbour(nodeId) then
+      table.insert(ids, neighbour:GetId())
+    end
   end
+
+  -- for _, neighbour in ipairs(node:GetNeighbours()) do
+  --  table.insert(ids, neighbour:GetId())
+  -- end
 
   -- Loop through all the neighbours and remove the connections.
   for _, neighbourId in ipairs(ids) do
@@ -70,10 +77,12 @@ end
 ---Adds a connection between two nodes.
 ---@param nodeA integer
 ---@param nodeB integer
+---@param bothWays boolean
 ---@return boolean
-function WMP_MapBuilder:AddConnection(nodeA, nodeB)
+function WMP_MapBuilder:AddConnection(nodeA, nodeB, bothWays)
   assert(nodeA ~= nil, 'NodeA must be defined')
   assert(nodeB ~= nil, 'NodeB must be defined')
+  assert(bothWays ~= nil, 'Both ways must be defined')
 
   local a, b = self:GetNode(nodeA), self:GetNode(nodeB)
 
@@ -82,7 +91,11 @@ function WMP_MapBuilder:AddConnection(nodeA, nodeB)
   end
 
   a:AddNeighbour(b)
-  b:AddNeighbour(a)
+
+  if bothWays then
+    b:AddNeighbour(a)
+  end
+
   return true
 end
 
