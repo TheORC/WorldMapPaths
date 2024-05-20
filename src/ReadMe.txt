@@ -1,6 +1,7 @@
 TODO
 - Only load maps data when we need it.
 - Fix the zone shortest path finding
+- Add sub zone length to path finding calculation
 - Performance
 
 This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates.

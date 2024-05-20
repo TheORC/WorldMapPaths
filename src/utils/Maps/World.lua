@@ -31,29 +31,40 @@ function WMP_World:GetPath(startZone, endZone)
     return nil
   end
 
-  local path = nil
-  local closest, distance = nil, 1 / 0
-
+  local allPaths, pathCount, shortestPathCount = {}, 0, 1 / 0
   for _, node in ipairs(startNodes) do
     for _, other in ipairs(endNodes) do
       -- curDistance = WMP_Vector.dist(node:GetPosition(), other:GetPosition())
       --- @type WMP_ShortestPath
-      path = WMP_ShortestPath:New(node, other)
+      local path = WMP_ShortestPath:New(node, other)
+      pathCount = path:GetLineCount()
 
-      if path:GetLineCount() < distance then
-        closest = node
-        distance = path:GetLineCount()
+      if not allPaths[pathCount] then
+        allPaths[pathCount] = {}
+      end
+
+      table.insert(allPaths[pathCount], path)
+
+      if pathCount < shortestPathCount then
+        shortestPathCount = pathCount
       end
     end
   end
 
+  local shortestDistance, shortestStart = 1 / 0, nil
+  for _, path in ipairs(allPaths[shortestPathCount]) do
+    if path:GetLength() < shortestDistance then
+      shortestDistance = path:GetLength()
+      shortestStart = path.startNode
+    end
+  end
 
   WMP_MESSENGER:Debug("WMP_World:GetPath() Start and end nodes found <<1>> <<2>>. Calculating path.",
-    closest:GetId(), endNodes[1]:GetId())
+    shortestStart:GetId(), endNodes[1]:GetId())
 
   ---@type WMP_WorldPath
   ---@diagnostic disable-next-line: undefined-field
-  local worldPath = WMP_WorldPath:New(closest, endNodes[1])
+  local worldPath = WMP_WorldPath:New(shortestStart, endNodes[1])
 
   if not worldPath:HasPath() then
     WMP_MESSENGER:Debug("WMP_World:GetPath() No path found.")

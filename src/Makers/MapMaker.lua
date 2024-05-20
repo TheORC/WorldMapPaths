@@ -1,5 +1,3 @@
-local GPS = LibGPS3
-
 ---Helper class for creating map path nodes.
 ---@class WMP_MapMaker
 ---@field private map WMP_Map -- The current map being worked on
@@ -25,7 +23,7 @@ function WMP_MapMaker:AddNode(connect_previous, oneWay)
 
   -- The player must be in the zone they are trying to add a node too
   if self.m_map:GetZoneId() ~= 0 and not WMP_IsPlayerInCurrentZone() then
-    WMP_MESSENGER:Warn("WMP_MapMaker:AddNode() ttempting to add a node to a zone you are not currently in")
+    WMP_MESSENGER:Warn("WMP_MapMaker:AddNode() Attempting to add a node to a zone you are not currently in")
     return
   end
 
