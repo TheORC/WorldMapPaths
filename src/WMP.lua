@@ -12,6 +12,7 @@ WMP_SETTINGS = {
 local IS_DEBUG = false
 local IS_MAKE = false
 local MAP_DIRTY = false
+local LAST_ZONE_ID = 0
 
 ---Returns the state of make mode
 ---@return boolean
@@ -84,13 +85,15 @@ local function OnAddonLoad(_, name)
     ZO_WorldMap_SetCustomZoomLevels(1, 15)
 
     WMP_SetMakeMode(false)
-    WMP_SetDebugMode(true)
+    WMP_SetDebugMode(false)
 
     WORLD_MAP_SCENE:RegisterCallback("StateChange", function(oldState, newState)
         if newState == 'shown' then
             WMP_DEBUG_RENDERER.m_mapSceneShowing = true
 
-            if WMP_InMakeMode() and MAP_DIRTY then
+            -- Check to see if we want to redraw the map
+            if WMP_InMakeMode() and (MAP_DIRTY or LAST_ZONE_ID ~= WMP_GetActiveMapZoneId()) then
+                LAST_ZONE_ID = WMP_GetActiveMapZoneId()
                 WMP_DEBUG_RENDERER:Draw()
             end
         else

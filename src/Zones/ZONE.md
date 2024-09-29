@@ -8,6 +8,7 @@ The Rift : 103
 Shadowfen : 117
 Bleakrock : 280
 Bal Foyen : 281
+Stros M'kai : 534
 Vvardenfell : 849
 Western Skyrim : 1160
 The Reach : 1207
