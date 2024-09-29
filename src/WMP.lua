@@ -11,6 +11,7 @@ WMP_SETTINGS = {
 
 local IS_DEBUG = false
 local IS_MAKE = false
+local MAP_DIRTY = false
 
 ---Returns the state of make mode
 ---@return boolean
@@ -45,6 +46,12 @@ function WMP_SetDebugMode(mode)
     IS_DEBUG = mode
 end
 
+---Sets whether the map is dirty and needs to be redraw.
+---@param state boolean
+function WMP_SetDirty(state)
+    MAP_DIRTY = state
+end
+
 ---Takes a string and splits it into words
 ---@param args string
 ---@return string[]
@@ -70,8 +77,6 @@ local function OnAddonLoad(_, name)
     if name ~= WMP_SETTINGS.NAME then return end
     EVENT_MANAGER:UnregisterForEvent(WMP_SETTINGS.NAME, EVENT_ADD_ON_LOADED)
 
-
-
     -- Load our storage
     WMP_STORAGE:LoadData()
     WMP_TPS_MANAGER:LateInitialize()
@@ -85,7 +90,7 @@ local function OnAddonLoad(_, name)
         if newState == 'shown' then
             WMP_DEBUG_RENDERER.m_mapSceneShowing = true
 
-            if WMP_InMakeMode() then
+            if WMP_InMakeMode() and MAP_DIRTY then
                 WMP_DEBUG_RENDERER:Draw()
             end
         else

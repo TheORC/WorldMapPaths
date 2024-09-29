@@ -42,7 +42,7 @@ end
 ---Caluclates the a node in the provided set with the next lowest f_score
 ---@param set WMP_Node[]
 ---@param f_score number[]
----@return WMP_Node
+---@return WMP_Node|nil
 local function calculate_lowest_f(set, f_score)
   -- Return the only item left
   if #set == 1 then
@@ -57,7 +57,6 @@ local function calculate_lowest_f(set, f_score)
     end
   end
 
-  ---@diagnostic disable-next-line: return-type-mismatch
   return bestNode
 end
 

@@ -163,6 +163,7 @@ end
 do
   ---Update the debug renderer
   function WMP_MapMaker:OnUpdate()
+    WMP_SetDirty(true)
     WMP_TPS_DEBUG_MANAGER:Drawpath()
   end
 end

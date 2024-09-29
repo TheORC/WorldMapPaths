@@ -9,7 +9,6 @@ WMP_Vector = { x = 0, y = 0 }
 ---@param y number
 ---@return WMP_Vector
 local function new(x, y)
-  ---@diagnostic disable-next-line: undefined-field
   return WMP_Vector:New(x, y)
 end
 

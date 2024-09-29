@@ -59,6 +59,8 @@ end
 
 ---Draws the current map information
 function WMP_Debug_Render:Draw()
+  WMP_SetDirty(false)
+
   -- Why update the map when we are not looking at it
   if not self.m_mapSceneShowing then
     return
